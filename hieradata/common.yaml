@@ -1,0 +1,27 @@
+---
+classes:
+    - common
+    - common::firewall::ssh
+packages:
+
+# Elasticsearch configs
+elasticsearch::manage_repo: true
+elasticsearch::repo_version: '1.1'
+elasticsearch::config:
+    cluster:
+        name: accessdev
+    path:
+        data: "%{hiera('elasticsearch::datadir')}"
+elasticsearch::datadir: '/var/elasticsearch'
+
+apache::default_mods: false
+apache::default_vhost: false
+apache::default_confd_files: false
+apache::mod::authnz_ldap::verifyServerCert: false
+
+# Nginx provides some authorization control
+nginx::nginx_vhosts:
+    "%{::fqdn}":
+        www_root: '/var/www'
+nginx::vhost_purge: true
+nginx::confd_purge: true

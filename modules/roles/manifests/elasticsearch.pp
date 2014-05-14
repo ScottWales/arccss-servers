@@ -1,0 +1,77 @@
+## \file    modules/roles/manifests/elasticsearch.pp
+#  \author  Scott Wales <scott.wales@unimelb.edu.au>
+#
+#  Copyright 2014 ARC Centre of Excellence for Climate Systems Science
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+# Create an elasticsearch instance hiding behind a proxy
+# Elasticsearch doesn't let us control what can be accessed, so we use Nginix
+# to enable that
+
+class roles::elasticsearch {
+  include roles::webserver
+
+  include ::elasticsearch
+  include java
+  include apache
+  include kibana
+
+  Class['java']   -> Class['::elasticsearch']
+  Package['wget'] -> Class['::elasticsearch']
+
+  # Setup backups
+  file {'/sbin/elasticsearch-backup':
+    ensure => present,
+    source => 'puppet:///modules/roles/elasticsearch-backup',
+    mode   => '0500',
+    owner  => 'root',
+  }
+  cron {'elasticsearch-backup':
+    command => '/sbin/elasticsearch-backup',
+    user    => 'root',
+    hour    => 1,
+  }
+
+  $vhost = $::ec2_public_ipv4
+
+  include apache::mod::proxy
+  include apache::mod::proxy_http
+
+  apache::vhost {'elasticsearch-redirect':
+    servername      => $vhost,
+    port            => '80',
+    redirect_status => 'permanent',
+    redirect_dest   => "https://${vhost}/",
+    docroot         => '/var/www/null',
+  }
+  apache::vhost {'elasticsearch-ssl':
+    servername      => $vhost,
+    port            => '443',
+    ssl             => true,
+    custom_fragment => template('roles/elasticsearch/apache-config.erb'),
+    docroot         => '/var/www/html',
+  }
+
+  #   # Authorisation controls
+  #   nginx::resource::location {[
+  #     '~ ^/_aliases$',
+  #     '~ ^/.*/_aliases$',
+  #     '~ ^/_nodes$',
+  #     '~ ^/.*/_search$',
+  #     '~ ^/.*/_mapping$',
+  #   ]:
+  #     proxy => 'http://localhost:9200',
+  #     vhost => $::fqdn,
+  #   }
+}

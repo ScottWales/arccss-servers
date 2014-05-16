@@ -21,10 +21,10 @@ class roles::webserver {
 
   include apache::mod::dir
 
-  # Required for LDAP authentication
-  include apache::mod::auth_basic
   apache::mod{'authz_user':}
   apache::mod{'authz_default':}
 
+  # Required for LDAP authentication
+  include apache::mod::auth_basic
   include apache::mod::authnz_ldap
 }

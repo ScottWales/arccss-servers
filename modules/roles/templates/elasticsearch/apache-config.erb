@@ -3,24 +3,30 @@
 
 # Proxy for _aliases and .*/_search
 <LocationMatch "^/(_nodes|_aliases|.*/_aliases|_search|.*/_search|_mapping|.*/_mapping)$">
-    ProxyPassMatch http://127.0.0.1:9200/$1
-    ProxyPassReverse http://127.0.0.1:9200/$1
+    ProxyPassMatch      http://127.0.0.1:9200/$1
+    ProxyPassReverse    http://127.0.0.1:9200/$1
 </LocationMatch>
 
 # Proxy for kibana-int/{dashboard,temp} stuff (if you don't want auth on /, then you will want these to be protected)
 <LocationMatch "^/(kibana-int/dashboard/|kibana-int/temp)(.*)$">
-    ProxyPassMatch http://127.0.0.1:9200/$1$2
-    ProxyPassReverse http://127.0.0.1:9200/$1$2
+    ProxyPassMatch      http://127.0.0.1:9200/$1$2
+    ProxyPassReverse    http://127.0.0.1:9200/$1$2
+</LocationMatch>
+
+# UMUI submissions
+<LocationMatch "^/(umui/submit)(.*)$">
+    ProxyPassMatch      http://127.0.0.1:9200/$1$2
+    ProxyPassReverse    http://127.0.0.1:9200/$1$2
+
+    # This location can be accessed without auth from accessdev, or via the web with an authorized account
+    Require             ip 130.56.244.72
 </LocationMatch>
 
 <Location />
-    Allow from localhost
-    Deny from all
-    Satisfy any
-
     AuthLDAPURL         "ldaps://sfldap0.anu.edu.au/ou=People,dc=apac,dc=edu,dc=au"
     AuthType            Basic
     AuthBasicProvider   ldap
     AuthName            "Please enter your NCI credentials"
-    require             valid-user
+    Require             valid-user
+    Satisfy             any
 </Location>

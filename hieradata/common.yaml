@@ -19,10 +19,3 @@ apache::default_mods: false
 apache::default_vhost: false
 apache::default_confd_files: false
 apache::mod::authnz_ldap::verifyServerCert: false
-
-# Nginx provides some authorization control
-nginx::nginx_vhosts:
-    "%{::fqdn}":
-        www_root: '/var/www'
-nginx::vhost_purge: true
-nginx::confd_purge: true

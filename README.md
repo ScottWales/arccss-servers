@@ -8,15 +8,15 @@ Usage
 
  * Boot/update:
 
-    make provision
+        make provision
 
  * Connect:
 
-    make ssh
+        make ssh
 
  * Shutdown
 
-    make shutdown
+        make shutdown
 
 Repository Layout
 -----------------

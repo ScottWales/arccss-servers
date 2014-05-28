@@ -41,6 +41,7 @@ class roles::elasticsearch {
     command => '/sbin/elasticsearch-backup',
     user    => 'root',
     hour    => 1,
+    minute  => 0,
   }
 
   $vhost = $::ec2_public_ipv4
@@ -55,6 +56,13 @@ class roles::elasticsearch {
     redirect_dest   => "https://${vhost}/",
     docroot         => '/var/www/null',
   }
+
+  # TODO
+  # At the moment we're feeding in the entire Apache config as a template,
+  # would be nice to be able to open up indexes through puppet, e.g.
+  #    elasticsearch::index {'umui':
+  #        require => "ip 127.0.0.1",
+  #    }
   apache::vhost {'elasticsearch-ssl':
     servername      => $vhost,
     port            => '443',
@@ -63,15 +71,11 @@ class roles::elasticsearch {
     docroot         => '/var/www/html',
   }
 
-  #   # Authorisation controls
-  #   nginx::resource::location {[
-  #     '~ ^/_aliases$',
-  #     '~ ^/.*/_aliases$',
-  #     '~ ^/_nodes$',
-  #     '~ ^/.*/_search$',
-  #     '~ ^/.*/_mapping$',
-  #   ]:
-  #     proxy => 'http://localhost:9200',
-  #     vhost => $::fqdn,
-  #   }
+  # For now set the Kibana home page here
+  # TODO This could be part of Kibana
+  file {'/var/www/html/app/dashboards/default.json':
+    ensure  => present,
+    require => Class['kibana'],
+    source  => 'puppet:///modules/roles/elasticsearch/kibana-default.json',
+  }
 }

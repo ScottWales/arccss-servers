@@ -1,6 +1,21 @@
 
 # Via https://github.com/elasticsearch/kibana/blob/master/sample/apache_ldap.conf
 
+<Location />
+    Order allow,deny
+    Allow from all
+
+    AuthLDAPURL         "ldaps://sfldap0.anu.edu.au/ou=People,dc=apac,dc=edu,dc=au?uid"
+    AuthType            Basic
+    AuthBasicProvider   ldap
+    AuthName            "Please enter your NCI credentials"
+    Require             ldap-group cn=access,ou=Group,dc=apac,dc=edu,dc=au
+    AuthzLDAPAuthoritative on
+    AuthLDAPGroupAttribute memberUid
+    AuthLDAPGroupAttributeIsDN off
+    Satisfy             all
+</Location>
+
 # Proxy for _aliases and .*/_search
 <LocationMatch "^/(_nodes|_aliases|.*/_aliases|_search|.*/_search|_mapping|.*/_mapping)$">
     ProxyPassMatch      http://127.0.0.1:9200/$1
@@ -13,20 +28,15 @@
     ProxyPassReverse    http://127.0.0.1:9200/$1$2
 </LocationMatch>
 
+# Allow submit access to each index
+
 # UMUI submissions
 <LocationMatch "^/(umui/submit)(.*)$">
     ProxyPassMatch      http://127.0.0.1:9200/$1$2
     ProxyPassReverse    http://127.0.0.1:9200/$1$2
 
     # This location can be accessed without auth from accessdev, or via the web with an authorized account
-    Require             ip 130.56.244.72
+    Deny from all
+    Allow from 130.56.244.72 150.203.254.65
+    Satisfy any
 </LocationMatch>
-
-<Location />
-    AuthLDAPURL         "ldaps://sfldap0.anu.edu.au/ou=People,dc=apac,dc=edu,dc=au"
-    AuthType            Basic
-    AuthBasicProvider   ldap
-    AuthName            "Please enter your NCI credentials"
-    Require             valid-user
-    Satisfy             any
-</Location>

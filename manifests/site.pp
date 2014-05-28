@@ -10,7 +10,7 @@ node default {
 
   # Root mail alias
   mailalias {'root':
-    recipient => 'scott.wales@unimelb.edu.au',
+    recipient => 'saw562@anusf.nci.org.au',
   }
 
   package {'rubygems':}

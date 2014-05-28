@@ -28,5 +28,13 @@ class common {
     command => '/usr/bin/yum update',
     user    => 'root',
     hour    => 1,
+    minute  => 0,
   }
+
+  # Setup hostname
+  host {$::fqdn:
+    ip           => $::ec2_public_ipv4,
+    host_aliases => $::hostname,
+  }
+
 }

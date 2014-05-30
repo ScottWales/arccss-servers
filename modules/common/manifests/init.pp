@@ -25,7 +25,7 @@ class common {
 
   # Yum updates
   cron {'yum update':
-    command => '/usr/bin/yum update',
+    command => '/usr/bin/yum update --assumeyes',
     user    => 'root',
     hour    => 1,
     minute  => 0,

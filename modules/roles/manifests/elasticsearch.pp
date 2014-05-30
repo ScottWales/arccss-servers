@@ -44,7 +44,7 @@ class roles::elasticsearch {
     minute  => 0,
   }
 
-  $vhost = $::ec2_public_ipv4
+  $vhost = $::fqdn
 
   include apache::mod::proxy
   include apache::mod::proxy_http

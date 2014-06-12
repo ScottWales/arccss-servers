@@ -32,7 +32,7 @@
         "0": {
           "type": "time",
           "field": "timestamp",
-          "from": "now-2d",
+          "from": "now-7d",
           "to": "now",
           "mandate": "must",
           "active": true,
@@ -99,7 +99,7 @@
           },
           "auto_int": true,
           "resolution": 100,
-          "interval": "30m",
+          "interval": "1h",
           "intervals": [
             "auto",
             "1s",
@@ -273,7 +273,7 @@
           "missing": false,
           "other": true,
           "size": 10,
-          "order": "term",
+          "order": "count",
           "style": {
             "font-size": "10pt"
           },
@@ -307,7 +307,7 @@
           "missing": false,
           "other": true,
           "size": 10,
-          "order": "term",
+          "order": "count",
           "style": {
             "font-size": "10pt"
           },
@@ -341,7 +341,7 @@
           "missing": false,
           "other": true,
           "size": 10,
-          "order": "term",
+          "order": "count",
           "style": {
             "font-size": "10pt"
           },
@@ -457,5 +457,5 @@
     "load_local": false,
     "hide": false
   },
-  "refresh": false
+  "refresh": "15m"
 }

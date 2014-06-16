@@ -1,19 +1,10 @@
+Base config for all servers
+
 ---
 classes:
     - common
     - common::firewall::ssh
-    - roles::elasticsearch 
 packages:
-
-# Elasticsearch configs
-elasticsearch::manage_repo: true
-elasticsearch::repo_version: '1.1'
-elasticsearch::config:
-    cluster:
-        name: accessdev
-    path:
-        data: "%{hiera('elasticsearch::datadir')}"
-elasticsearch::datadir: '/var/elasticsearch'
 
 apache::default_mods: false
 apache::default_vhost: false

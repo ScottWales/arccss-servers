@@ -1,4 +1,4 @@
-## \file    modules/common/manifests/backup.pp
+## \file    modules/common/manifests/firewall/http.pp
 #  \author  Scott Wales <scott.wales@unimelb.edu.au>
 #
 #  Copyright 2014 ARC Centre of Excellence for Climate Systems Science
@@ -15,16 +15,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Set up automatic backups for $path
-# Note that Amanda configuration is server-side, this just creates a directory
-class common::backup (
-  $path = '/backup',
-) {
-
-  include amanda::client
-
-  file {$path:
-    ensure => directory,
+class roles::common::firewall::http {
+  firewall {'080 http':
+    proto  => 'tcp',
+    port   => ['80','443'],
+    action => 'accept',
   }
-
 }

@@ -1,4 +1,4 @@
-## \file    modules/common/manifests/firewall/ssh.pp
+## \file    modules/common/manifests/firewall.pp
 #  \author  Scott Wales <scott.wales@unimelb.edu.au>
 #
 #  Copyright 2014 ARC Centre of Excellence for Climate Systems Science
@@ -15,10 +15,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-class common::firewall::ssh {
-  firewall {'022 ssh':
-    proto  => 'tcp',
-    port   => '22',
-    action => 'accept',
+class roles::common::firewall {
+  include ::firewall
+  include roles::common::firewall::pre
+  include roles::common::firewall::post
+  include roles::common::firewall::ssh
+
+  # Purge unused rules after firewall setup
+  resources {'purge iptables':
+    name     => 'firewall',
+    purge    => true,
+  }
+
+  firewallchain {'INPUT:filter:IPv6':
+    purge  => true,
+    policy => 'drop',
+  }
+  firewallchain {'FORWARD:filter:IPv6':
+    purge  => true,
+    policy => 'drop',
   }
 }

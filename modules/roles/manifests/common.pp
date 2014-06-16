@@ -1,4 +1,4 @@
-## \file    modules/common/manifests/firewall/http.pp
+## \file    modules/common/init.pp
 #  \author  Scott Wales <scott.wales@unimelb.edu.au>
 #
 #  Copyright 2014 ARC Centre of Excellence for Climate Systems Science
@@ -15,10 +15,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-class common::firewall::http {
-  firewall {'080 http':
-    proto  => 'tcp',
-    port   => ['80','443'],
-    action => 'accept',
+# Common stuff for all servers
+class roles::common {
+  # Firewall
+  include roles::common::firewall
+
+  # Backup location
+  include roles::common::backup
+
+  # Yum updates
+  cron {'yum update':
+    command => '/usr/bin/yum update',
+    user    => 'root',
+    hour    => 1,
+    minute  => 0,
   }
+
+  # Setup hostname
+  host {$::fqdn:
+    ip           => $::ec2_public_ipv4,
+    host_aliases => $::hostname,
+  }
+
 }

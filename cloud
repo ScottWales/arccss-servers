@@ -1,0 +1,115 @@
+#!/bin/bash
+## \file    cloud.sh
+#  \author  Scott Wales <scott.wales@unimelb.edu.au>
+#
+#  Copyright 2014 ARC Centre of Excellence for Climate Systems Science
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+set -x 
+
+proxy='ssh cloudlogin.nci.org.au nc %h %p 2> /dev/null'
+sshflags="-o ProxyCommand='ssh cloudlogin.nci.org.au nc %h %p 2> /dev/null' -o GSSAPIAuthentication=no"
+
+function config {
+    local hostname=$1
+
+    # Defaults
+    image='centos-6.4-20130920'
+    flavor='m1.small'
+
+    case $hostname in
+        'proxy')
+            publicip=130.56.244.115 ;;
+    esac
+}
+
+# Get an IP address for the host
+function cloudip {
+    local hostname=$1
+    nova list | grep "\<$hostname\>" | sed 's/.*nci_network=\([0-9\.]*\).*/\1/'
+    echo "$hostname running at ip $ip" >&2
+}
+
+# Boot the host
+function boot {
+    local hostname=$1
+
+    config $hostname
+
+    if [ -z "$(cloudip $hostname)" ]; then
+        nova boot "$hostname" \
+            --image     "$image" \
+            --flavor    "$flavor" \
+            --key_name  "$(hostname)" \
+            --user_data "userdata.sh" \
+            --poll
+    fi
+    
+    # Remove old key
+    ssh-keygen -f "$HOME/.ssh/known_hosts" -R "$(cloudip "$hostname")"
+
+    # Run commands as ec2-user with sudo
+    remote="ssh ec2-user@$hostname sudo"
+
+    # Wait for VM to come online
+    while ! $remote true; do sleep 10; done
+
+    $remote yum update --assumeyes
+
+    # Install puppet and some other pre-reqs
+    $remote rpm --install 'https://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-7.noarch.rpm'
+    $remote yum install --assumeyes puppet git rsync rubygems
+    $remote gem install libraian-puppet --no-rdoc --no-ri
+
+    # Clear out iptables to avoid puppet conflicts (can't purge ip6tables)
+    $remote iptables  -F
+    $remote ip6tables -F
+}
+
+# SSH to the host (possibly as a different user)
+function ssh {
+    local userathostname=$1
+    local userat=$(echo $userathostname | sed 's/\(\S*@\)\?\(\S*\)/\1/')
+    local hostname=$(echo $userathostname | sed 's/\(\S*@\)\?\(\S*\)/\2/')
+
+    # Cache ip
+    : ${ip:=$(cloudip $hostname)}
+    if [ -z "$ip" ]; then
+        echo "ERROR: Cannot find IP for host $hostname" >&2
+        exit -1
+    fi
+
+    shift
+    command ssh -t -o ProxyCommand="$proxy" -o GSSAPIAuthentication=no $userat$ip $*
+}
+
+# Provision the host
+function provision {
+    local hostname=$1
+
+}
+
+function help {
+    cat << EOF
+Perform cloud tasks:
+
+provision  HOST             Provision a host (will boot if not running)
+shutdown   HOST             Shutdown a host
+ssh        [USER@]HOST      Connect to a host
+EOF
+}
+
+command=${1:-"help"}
+
+"$command" $2

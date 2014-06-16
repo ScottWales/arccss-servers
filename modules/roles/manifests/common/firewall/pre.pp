@@ -15,7 +15,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-class common::firewall::pre {
+class roles::common::firewall::pre {
   Firewall {
     require => undef,
   }

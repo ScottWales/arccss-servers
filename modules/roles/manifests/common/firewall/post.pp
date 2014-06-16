@@ -15,7 +15,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-class common::firewall::post {
+class roles::common::firewall::post {
   firewall {'999 ip4 INPUT drop all':
     proto    => 'all',
     action   => 'drop',

@@ -1,0 +1,5 @@
+Jenkins CI service
+
+---
+classes:
+    - roles::jenkins

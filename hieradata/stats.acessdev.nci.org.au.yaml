@@ -1,0 +1,16 @@
+Elasticsearch based analytics service
+
+---
+classes:
+    - roles::elasticsearch 
+
+# Elasticsearch configs
+elasticsearch::manage_repo: true
+elasticsearch::repo_version: '1.1'
+elasticsearch::config:
+    cluster:
+        name: accessdev
+    path:
+        data: "%{hiera('elasticsearch::datadir')}"
+elasticsearch::datadir: '/var/elasticsearch'
+

@@ -1,4 +1,4 @@
-## \file    modules/common/init.pp
+## \file    modules/common/manifests/backup.pp
 #  \author  Scott Wales <scott.wales@unimelb.edu.au>
 #
 #  Copyright 2014 ARC Centre of Excellence for Climate Systems Science
@@ -15,26 +15,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Common stuff for all servers
-class common {
-  # Firewall
-  include common::firewall
+# Set up automatic backups for $path
+# Note that Amanda configuration is server-side, this just creates a directory
+class roles::common::backup (
+  $path = '/backup',
+) {
 
-  # Backup location
-  include common::backup
+  include amanda::client
 
-  # Yum updates
-  cron {'yum update':
-    command => '/usr/bin/yum update',
-    user    => 'root',
-    hour    => 1,
-    minute  => 0,
-  }
-
-  # Setup hostname
-  host {$::fqdn:
-    ip           => $::ec2_public_ipv4,
-    host_aliases => $::hostname,
+  file {$path:
+    ensure => directory,
   }
 
 }

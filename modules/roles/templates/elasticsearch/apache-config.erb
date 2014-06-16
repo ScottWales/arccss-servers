@@ -40,3 +40,34 @@
     Allow from 130.56.244.72 150.203.254.65
     Satisfy any
 </LocationMatch>
+
+# Test submissions
+<LocationMatch "^/(umui-test/submit)(.*)$">
+    ProxyPassMatch      http://127.0.0.1:9200/$1$2
+    ProxyPassReverse    http://127.0.0.1:9200/$1$2
+
+    # This location can be accessed without auth from accessdev, or via the web with an authorized account
+    Deny from all
+    Allow from 130.56.244.76
+    Satisfy any
+</LocationMatch>
+
+# Rose jobs
+<LocationMatch "^/(rose/)(.*)$">
+    ProxyPassMatch      http://127.0.0.1:9200/$1$2
+    ProxyPassReverse    http://127.0.0.1:9200/$1$2
+
+    # This location can be accessed without auth from accessdev, or via the web with an authorized account
+    Deny from all
+    Allow from 130.56.244.72
+    Satisfy any
+</LocationMatch>
+<LocationMatch "^/(rose-test/)(.*)$">
+    ProxyPassMatch      http://127.0.0.1:9200/$1$2
+    ProxyPassReverse    http://127.0.0.1:9200/$1$2
+
+    # This location can be accessed without auth from accessdev, or via the web with an authorized account
+    Deny from all
+    Allow from 130.56.244.72
+    Satisfy any
+</LocationMatch>

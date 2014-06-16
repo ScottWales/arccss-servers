@@ -8,3 +8,5 @@ apache::default_mods: false
 apache::default_vhost: false
 apache::default_confd_files: false
 apache::mod::authnz_ldap::verifyServerCert: false
+apache::default_ssl_cert: "/etc/pki/tls/certs/%{::fqdn}.crt"
+apache::default_ssl_key: "/etc/pki/tls/private/%{::fqdn}.key"

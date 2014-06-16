@@ -4,17 +4,27 @@
     "query": {
       "list": {
         "0": {
-          "query": "*",
+          "query": "hostname=accesscollab",
           "alias": "",
           "color": "#7EB26D",
           "id": 0,
           "pin": false,
           "type": "lucene",
           "enable": true
+        },
+        "1": {
+          "id": 1,
+          "color": "#EAB839",
+          "alias": "",
+          "pin": false,
+          "type": "lucene",
+          "enable": true,
+          "query": "hostname=accessdev.nci.org.au"
         }
       },
       "ids": [
-        0
+        0,
+        1
       ]
     },
     "filter": {
@@ -22,7 +32,7 @@
         "0": {
           "type": "time",
           "field": "timestamp",
-          "from": "now-30d",
+          "from": "now-7d",
           "to": "now",
           "mandate": "must",
           "active": true,
@@ -73,7 +83,8 @@
           "queries": {
             "mode": "all",
             "ids": [
-              0
+              0,
+              1
             ]
           },
           "annotate": {
@@ -88,7 +99,7 @@
           },
           "auto_int": true,
           "resolution": 100,
-          "interval": "12h",
+          "interval": "1h",
           "intervals": [
             "auto",
             "1s",
@@ -162,7 +173,8 @@
           "queries": {
             "mode": "all",
             "ids": [
-              0
+              0,
+              1
             ]
           },
           "tmode": "terms",
@@ -197,7 +209,8 @@
           "queries": {
             "mode": "all",
             "ids": [
-              0
+              0,
+              1
             ]
           },
           "tmode": "terms",
@@ -230,7 +243,8 @@
           "queries": {
             "mode": "all",
             "ids": [
-              0
+              0,
+              1
             ]
           },
           "tmode": "terms",
@@ -259,7 +273,7 @@
           "missing": false,
           "other": true,
           "size": 10,
-          "order": "term",
+          "order": "count",
           "style": {
             "font-size": "10pt"
           },
@@ -273,7 +287,8 @@
           "queries": {
             "mode": "all",
             "ids": [
-              0
+              0,
+              1
             ]
           },
           "tmode": "terms",
@@ -292,7 +307,7 @@
           "missing": false,
           "other": true,
           "size": 10,
-          "order": "term",
+          "order": "count",
           "style": {
             "font-size": "10pt"
           },
@@ -306,7 +321,8 @@
           "queries": {
             "mode": "all",
             "ids": [
-              0
+              0,
+              1
             ]
           },
           "tmode": "terms",
@@ -325,7 +341,7 @@
           "missing": false,
           "other": true,
           "size": 10,
-          "order": "term",
+          "order": "count",
           "style": {
             "font-size": "10pt"
           },
@@ -339,7 +355,8 @@
           "queries": {
             "mode": "all",
             "ids": [
-              0
+              0,
+              1
             ]
           },
           "tmode": "terms",
@@ -378,7 +395,10 @@
       "enable": true,
       "query": "*",
       "pinned": true,
-      "history": [],
+      "history": [
+        "hostname=accessdev.nci.org.au",
+        "hostname=accesscollab"
+      ],
       "remember": 10
     },
     {
@@ -437,5 +457,5 @@
     "load_local": false,
     "hide": false
   },
-  "refresh": false
+  "refresh": "15m"
 }

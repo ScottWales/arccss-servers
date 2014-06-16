@@ -16,9 +16,11 @@
 #  limitations under the License.
 
 # Common stuff for all servers
-class roles::common {
+class roles::common (
+  $fqdn = $::fqdn,
+) {
   # Firewall
-  include roles::common::firewall
+  include roles::firewall
 
   # Backup location
   include roles::common::backup
@@ -32,7 +34,7 @@ class roles::common {
   }
 
   # Setup hostname
-  host {$::fqdn:
+  host {$fqdn:
     ip           => $::ec2_public_ipv4,
     host_aliases => $::hostname,
   }

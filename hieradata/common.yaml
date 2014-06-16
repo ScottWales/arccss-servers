@@ -1,10 +1,8 @@
-Base config for all servers
-
 ---
+# Puppet classes to install
 classes:
-    - common
-    - common::firewall::ssh
-packages:
+    - roles::common
+    - roles::firewall::ssh
 
 apache::default_mods: false
 apache::default_vhost: false

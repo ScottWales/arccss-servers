@@ -17,14 +17,12 @@
 
 class roles::webserver {
   include apache
-  include common::firewall::http
-
-  include apache::mod::dir
-
-  apache::mod{'authz_user':}
-  apache::mod{'authz_default':}
+  include roles::firewall::http
 
   # Required for LDAP authentication
+  include apache::mod::dir
   include apache::mod::auth_basic
   include apache::mod::authnz_ldap
+  apache::mod{'authz_user':}
+  apache::mod{'authz_default':}
 }

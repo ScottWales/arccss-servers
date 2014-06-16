@@ -1,11 +1,17 @@
+# Puppet node definition
+#
+# This sets up a VM using the configuration settings found in the 'hieradata'
+# directory.
 
 node default {
 
-  include common
+  # Include default classes
+  include roles::common
 
+  # Set up firewall dependencies
   Firewall {
-    require => Class['common::firewall::pre'],
-    before  => Class['common::firewall::post'],
+    require => Class['roles::firewall::pre'],
+    before  => Class['roles::firewall::post'],
   }
 
   # Root mail alias
@@ -13,14 +19,18 @@ node default {
     recipient => 'saw562@anusf.nci.org.au',
   }
 
+  # Package pre-requisites
   package {'rubygems':}
   Package['rubygems'] -> Package<|provider == gem|>
-
   package {'python-pip':}
   Package['python-pip'] -> Package<|provider == pip|>
 
   package {'wget': }
 
+  # Include classes listed in 'hieradata' files
+  # These should mainly be from the 'roles' module, the roles sets up
+  # dependencies from external modules (e.g. install a Jenkins instance then
+  # configure an Apache vhost pointing to it)
   hiera_include('classes')
 
 }

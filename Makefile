@@ -9,7 +9,7 @@
 # Default task is to boot & provision host
 all: provision
 
-HOST      ?= stats
+HOST      ?= 
 # Openstack host key to use for root
 VMKEY     := $(shell hostname)
 
@@ -44,7 +44,7 @@ PPFILES   := $(shell find . -type f -name '*.pp' ! -wholename '*/.*')
 # Apply this puppet manifest on the VM
 provision: boot lint validate
 	${RSYNC} $$PWD/ ${REMOTE}:/etc/puppet
-	${SSH} ${REMOTE} 'cd /etc/puppet && librarian-puppet install'
+	${SSH} ${REMOTE} 'cd /etc/puppet && librarian-puppet install --verbose'
 	${SSH} ${REMOTE} puppet apply /etc/puppet/manifests/site.pp
 
 # Boot the VM ('if' check is so that the VM isn't booted twice)
@@ -59,8 +59,9 @@ boot:
 		${VMNAME}; \
 	    nova add-floating-ip ${VMNAME} ${VMIP}; \
 	    while ! ${SSH} ${REMOTE} true; do sleep 10; done; \
+	    ${SSH} ${REMOTE} yum update --assumeyes; \
 	    ${SSH} ${REMOTE} rpm -ivh https://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-7.noarch.rpm; \
-	    ${SSH} ${REMOTE} yum install --assumeyes puppet rsync rubygems; \
+	    ${SSH} ${REMOTE} yum install --assumeyes git puppet rsync rubygems; \
 	    ${SSH} ${REMOTE} gem install librarian-puppet --no-rdoc --no-ri; \
 	    ${SSH} ${REMOTE} iptables -F; \
 	    ${SSH} ${REMOTE} ip6tables -F; \

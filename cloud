@@ -18,7 +18,7 @@
 
 set -x 
 
-repo='https://github.com/coecms/analytics-server'
+repo='https://github.com/ScottWales/arccss-servers'
 
 proxy='ssh cloudlogin.nci.org.au nc %h %p 2> /dev/null'
 sshflags="-o ProxyCommand='ssh cloudlogin.nci.org.au nc %h %p 2> /dev/null' -o GSSAPIAuthentication=no"

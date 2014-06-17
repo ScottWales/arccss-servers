@@ -111,15 +111,16 @@ function provision {
 
     remote="ssh ec2-user@$hostname cd /etc/puppet && sudo"
 
-    if [ $hostname == "puppetmaster" ]; then
+#   # Bootstrap Puppetmaster
+#   if [ $hostname == "puppetmaster" ]; then
         $remote git init
         $remote git remote add origin $repo
         $remote git pull origin master
         $remote scl enable ruby193 \' librarian-puppet install --verbose \'
         $remote puppet apply manifests/site.pp
-    else
-        $remote puppet agent --test
-    fi
+#   else
+#       $remote puppet agent --test
+#   fi
 }
 
 function help {

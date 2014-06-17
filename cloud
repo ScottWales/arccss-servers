@@ -18,15 +18,19 @@
 
 set -x 
 
+repo='https://github.com/coecms/analytics-server'
+
 proxy='ssh cloudlogin.nci.org.au nc %h %p 2> /dev/null'
 sshflags="-o ProxyCommand='ssh cloudlogin.nci.org.au nc %h %p 2> /dev/null' -o GSSAPIAuthentication=no"
 
+# Get the OpenStack config settings for the host
 function config {
     local hostname=$1
 
     # Defaults
-    image='centos-6.4-20130920'
-    flavor='m1.small'
+    : ${image:='centos-6.4-20130920'}
+    : ${flavor:='m1.small'}
+    : ${keypair:="$(hostname)"}
 
     case $hostname in
         'proxy')
@@ -38,7 +42,6 @@ function config {
 function cloudip {
     local hostname=$1
     nova list | grep "\<$hostname\>" | sed 's/.*nci_network=\([0-9\.]*\).*/\1/'
-    echo "$hostname running at ip $ip" >&2
 }
 
 # Boot the host
@@ -47,11 +50,12 @@ function boot {
 
     config $hostname
 
+    # Boot if the server doesn't exist
     if [ -z "$(cloudip $hostname)" ]; then
         nova boot "$hostname" \
             --image     "$image" \
             --flavor    "$flavor" \
-            --key_name  "$(hostname)" \
+            --key_name  "$keypair" \
             --user_data "userdata.sh" \
             --poll
     fi
@@ -69,8 +73,9 @@ function boot {
 
     # Install puppet and some other pre-reqs
     $remote rpm --install 'https://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-7.noarch.rpm'
-    $remote yum install --assumeyes puppet git rsync rubygems
-    $remote gem install libraian-puppet --no-rdoc --no-ri
+    $remote yum install --assumeyes centos-release-SCL
+    $remote yum install --assumeyes puppet git rsync ruby193 ruby193-ruby-devel gcc
+    $remote scl enable ruby193 \'gem install librarian-puppet --no-rdoc --no-ri\'
 
     # Clear out iptables to avoid puppet conflicts (can't purge ip6tables)
     $remote iptables  -F
@@ -80,8 +85,8 @@ function boot {
 # SSH to the host (possibly as a different user)
 function ssh {
     local userathostname=$1
-    local userat=$(echo $userathostname | sed 's/\(\S*@\)\?\(\S*\)/\1/')
-    local hostname=$(echo $userathostname | sed 's/\(\S*@\)\?\(\S*\)/\2/')
+    local userat=$(echo $userathostname | sed -E 's/([[:print:]]*@)?([[:print:]]*)/\1/')
+    local hostname=$(echo $userathostname | sed -E 's/([[:print:]]*@)?([[:print:]]*)/\2/')
 
     # Cache ip
     : ${ip:=$(cloudip $hostname)}
@@ -98,6 +103,17 @@ function ssh {
 function provision {
     local hostname=$1
 
+    remote="ssh ec2-user@$hostname cd /etc/puppet && sudo"
+
+    if [ $hostname == "puppetmaster" ]; then
+        $remote git init
+        $remote git remote add origin $repo
+        $remote git pull origin master
+        $remote scl enable ruby193 \' librarian-puppet install --verbose \'
+        $remote puppet apply manifests/site.pp
+    else
+        $remote puppet agent --test
+    fi
 }
 
 function help {

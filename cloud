@@ -82,6 +82,12 @@ function boot {
     $remote ip6tables -F
 }
 
+function shutdown {
+    local hostname=$1
+
+    nova delete "$hostname"
+}
+
 # SSH to the host (possibly as a different user)
 function ssh {
     local userathostname=$1
@@ -128,4 +134,8 @@ EOF
 
 command=${1:-"help"}
 
-"$command" $2
+if [ -f hieradata/${2}.yaml ]; then
+    "$command" "$2"
+else
+    help
+fi

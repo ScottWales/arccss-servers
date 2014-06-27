@@ -119,7 +119,7 @@ function provision {
     # Run commands as ec2-user with sudo
     ssh ec2-user@$hostname << EOF
     cd /etc/puppet
-    sudo git pull
+    sudo git pull origin master
     sed -n 's/^mod\s*"\(.*\)"/\1/p' Puppetfile | xargs -L 1 -t sudo puppet module install
     sudo puppet apply manifests/site.pp
 EOF

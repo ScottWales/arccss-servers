@@ -2,6 +2,7 @@
 # Puppet classes to install
 classes:
     - roles::common
+    - roles::common::admins
     - roles::firewall::ssh
 
 apache::default_mods: false

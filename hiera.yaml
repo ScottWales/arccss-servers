@@ -5,4 +5,5 @@
     - secure
     - "%{::hostname}"
     - insecure
+    - admins
     - common

@@ -34,9 +34,16 @@ class roles::common (
   }
 
   # Setup hostname
-  host {$fqdn:
-    ip           => $::ec2_public_ipv4,
-    host_aliases => $::hostname,
+  if $::ec2_public_ipv4 {
+    host {$fqdn:
+      ip           => $::ec2_public_ipv4,
+      host_aliases => $::hostname,
+    }
+  } else {
+    host {$fqdn:
+      ip           => $::ipaddress,
+      host_aliases => $::hostname,
+    }
   }
 
 }

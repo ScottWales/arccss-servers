@@ -1,0 +1,4 @@
+Subversion mirror for the UM
+---
+classes:
+ - roles::svnserve

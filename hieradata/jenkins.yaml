@@ -1,0 +1,18 @@
+---
+classes:
+    - roles::jenkins
+
+packages:
+    - git
+
+roles::common::fqdn: jenkins.climate-cms.nci.org.au
+
+jenkins::configure_firewall: false
+jenkins::plugin_hash:
+    'docker-plugin': {}
+    'github': {}
+    'github-api': {}
+    'git': {}
+
+docker::tcp_bind: 'tcp://127.0.0.1:4243'
+

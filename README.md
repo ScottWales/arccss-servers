@@ -1,38 +1,36 @@
-Analytics service
-=================
+ARCCSS CMS Servers
+==================
 
-Provides an elasticsearch/kibana analytics interface on the NCI cloud
+Available servers:
 
-Usage
------
+ - *puppetmaster*: Puppet provisioning control
+ - *proxy*: Web proxy & load balancer
+ - *downloader*: Write access to /g/data
+ - *ramadda*: Ramadda/Thredds data repository interface
+ - *jenkins*: Continuous integration server
 
- * Boot/update:
+Control
+-------
 
-        ./cloud boot $HOST
-        ./cloud provision $HOST
+To boot a server:
 
- * Connect:
+    ./cloud boot SERVER
 
-        ./cloud ssh $USER@$HOST
+To ssh to a server
 
- * Shutdown
+    ./cloud ssh SERVER
 
-        ./cloude shutdown $HOST
+To shutdown a server
 
-Repository Layout
------------------
+    ./cloud shutdown SERVER
 
-The main manifest is `manifests/site.pp`, which sets up some dependencies then
-loads classes listed in Hiera. The classes in the `roles` module are the main
-glue code, for instance `roles::elasticsearch` installs Elasticsearch &
-Kibanaas well as sets up Apache.
+How it works
+------------
 
-External Puppet modules listed in the Puppetfile are installed using
-librarian-puppet. 
+The `cloud` script will boot an instance using nova, then connect to the server
+to install puppet & related programs.
 
-Server Layout
--------------
+Provisioning is done by having the servers connect to the puppetmaster via
+cloud-init. Bootstrapping the puppetmaster itself is done by checking out the
+repository on the server & running `puppet apply`.
 
-The server runs an Elasticsearch host, protected by an Apache reverse proxy.
-Kibana is available at `https://$::fqdn` with LDAP authentication, clients can
-also access Elasticsearch indices through whitelisted IPs to create records.

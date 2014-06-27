@@ -18,15 +18,19 @@
 
 set -x 
 
+repo='https://github.com/ScottWales/arccss-servers'
+
 proxy='ssh cloudlogin.nci.org.au nc %h %p 2> /dev/null'
 sshflags="-o ProxyCommand='ssh cloudlogin.nci.org.au nc %h %p 2> /dev/null' -o GSSAPIAuthentication=no"
 
+# Get the OpenStack config settings for the host
 function config {
     local hostname=$1
 
     # Defaults
-    image='centos-6.4-20130920'
-    flavor='m1.small'
+    : ${image:='centos-6.4-20130920'}
+    : ${flavor:='m1.small'}
+    : ${keypair:="$(hostname)"}
 
     case $hostname in
         'proxy')
@@ -38,7 +42,6 @@ function config {
 function cloudip {
     local hostname=$1
     nova list | grep "\<$hostname\>" | sed 's/.*nci_network=\([0-9\.]*\).*/\1/'
-    echo "$hostname running at ip $ip" >&2
 }
 
 # SSH to the host (possibly as a different user)
@@ -64,11 +67,12 @@ function boot {
 
     config $hostname
 
+    # Boot if the server doesn't exist
     if [ -z "$(cloudip $hostname)" ]; then
         nova boot "$hostname" \
             --image     "$image" \
             --flavor    "$flavor" \
-            --key_name  "$(hostname)" \
+            --key_name  "$keypair" \
             --user_data "userdata.sh" \
             --poll
     fi
@@ -136,4 +140,8 @@ EOF
 
 command=${1:-"help"}
 
-"$command" $2
+if [ -f hieradata/${2}.yaml ]; then
+    "$command" "$2"
+else
+    help
+fi

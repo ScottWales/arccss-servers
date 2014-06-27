@@ -17,6 +17,7 @@
 
 # Setup a single admin
 define roles::common::admins::admin (
+  $home = "/home/${name}",
   $mail = undef,
   $sudo = false,
   $authorized_keys = {},
@@ -24,7 +25,9 @@ define roles::common::admins::admin (
 
   # Create user
   user {$name:
-    ensure => present,
+    ensure     => present,
+    home       => $home,
+    managehome => true,
   }
 
   # Setup admin mail address
@@ -36,7 +39,8 @@ define roles::common::admins::admin (
 
   # Setup keys
   Ssh_authorized_key{
-    user => $name,
+    user    => $name,
+    require => User[$name],
   }
 
   create_resources('ssh_authorized_key', $authorized_keys)

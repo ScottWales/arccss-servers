@@ -23,6 +23,8 @@ repo='https://github.com/ScottWales/arccss-servers'
 proxy='ssh cloudlogin.nci.org.au nc %h %p 2> /dev/null'
 sshflags="-o ProxyCommand='ssh cloudlogin.nci.org.au nc %h %p 2> /dev/null' -o GSSAPIAuthentication=no"
 
+OS_TENANT_NAME=fe2_2
+
 # Get the OpenStack config settings for the host
 function config {
     local hostname=$1

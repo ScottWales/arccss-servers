@@ -21,4 +21,4 @@
 
 disable_root: 0
 runcmd:
- - [/bin/bash, '-c', 'echo "ec2-user ALL=NOPASSWD:ALL" > /etc/sudoers.d/ec2-user']
+ - [/bin/bash, '-c', 'echo -e "Defaults:ec2-user !requiretty\nec2-user ALL=NOPASSWD:ALL" > /etc/sudoers.d/ec2-user']

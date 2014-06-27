@@ -21,4 +21,10 @@ class roles::common::admins {
   $adminhash = hiera_hash('admins',{})
 
   create_resources('roles::common::admins::admin', $adminhash)
+
+  # Send root mail to admins
+  $adminnames = keys($adminhash)
+  mailalias {'root':
+    recipient => $adminnames,
+  }
 }

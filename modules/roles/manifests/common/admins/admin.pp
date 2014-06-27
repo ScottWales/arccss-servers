@@ -34,12 +34,6 @@ define roles::common::admins::admin (
     }
   }
 
-  # Direct root mail to admin
-  mailalias {"root-${name}":
-    name      => 'root',
-    recipient => $name,
-  }
-
   # Setup keys
   Ssh_authorized_key{
     user => $name,

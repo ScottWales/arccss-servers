@@ -22,9 +22,6 @@ class roles::common (
   # Firewall
   include roles::firewall
 
-  # Backup location
-  include roles::common::backup
-
   # Yum updates
   cron {'yum update':
     command => '/usr/bin/yum update --assumeyes',

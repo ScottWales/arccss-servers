@@ -3,6 +3,7 @@
 classes:
     - roles::common
     - roles::common::admins
+    - roles::common::backup
     - roles::firewall::ssh
 
 apache::default_mods: false

@@ -118,7 +118,7 @@ function provision {
     ssh ec2-user@$hostname << EOF
     cd /etc/puppet
     sed -n 's/^mod\s*"\(.*\)"/\1/p' Puppetfile | xargs -L 1 -t sudo puppet module install
-    puppet apply manifests/site.pp
+    sudo puppet apply manifests/site.pp
 EOF
 }
 
@@ -139,9 +139,11 @@ EOF
 }
 
 command=${1:-"help"}
+hostname=$(echo $2 | sed 's/\(\S*@\)\?\(\S*\)/\2/')
 
-if [ -f hieradata/${2}.yaml ]; then
-    "$command" "$2"
+if [ -f hieradata/$hostname.yaml ]; then
+    "$command" "$2" 
 else
+    echo "Unknown hostname \"$hostname\""
     help
 fi

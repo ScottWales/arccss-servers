@@ -15,8 +15,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Apache-based subversion server
-class roles::svnserve {
+# Apache-based subversion write-through proxy
+class roles::svnmirror {
 
   yumrepo {'wandisco':
     baseurl  => 'http://opensource.wandisco.com/rhel/6/svn-1.8/RPMS/',

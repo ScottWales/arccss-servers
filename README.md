@@ -8,15 +8,16 @@ Usage
 
  * Boot/update:
 
-        make provision
+        ./cloud boot $HOST
+        ./cloud provision $HOST
 
  * Connect:
 
-        make ssh
+        ./cloud ssh $USER@$HOST
 
  * Shutdown
 
-        make shutdown
+        ./cloude shutdown $HOST
 
 Repository Layout
 -----------------

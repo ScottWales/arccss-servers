@@ -41,6 +41,23 @@ function cloudip {
     echo "$hostname running at ip $ip" >&2
 }
 
+# SSH to the host (possibly as a different user)
+function ssh {
+    local userathostname=$1
+    local userat=$(echo $userathostname | sed 's/\(\S*@\)\?\(\S*\)/\1/')
+    local hostname=$(echo $userathostname | sed 's/\(\S*@\)\?\(\S*\)/\2/')
+
+    # Cache ip
+    : ${ip:=$(cloudip $hostname)}
+    if [ -z "$ip" ]; then
+        echo "ERROR: Cannot find IP for host $hostname" >&2
+        exit -1
+    fi
+
+    shift
+    command ssh -o ProxyCommand="$proxy" -o GSSAPIAuthentication=no $userat$ip $*
+}
+
 # Boot the host
 function boot {
     local hostname=$1
@@ -65,39 +82,46 @@ function boot {
     # Wait for VM to come online
     while ! $remote true; do sleep 10; done
 
+    # Install updates
     $remote yum update --assumeyes
 
-    # Install puppet and some other pre-reqs
-    $remote rpm --install 'https://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-7.noarch.rpm'
-    $remote yum install --assumeyes puppet git rsync rubygems
-    $remote gem install libraian-puppet --no-rdoc --no-ri
+    # Do first-time setup
+    ssh ec2-user@$hostname << EOF
+    # Install pre-reqs
+    sudo rpm --install 'https://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-7.noarch.rpm'
+    sudo yum install --assumeyes puppet git
+
+    # Initialise Puppet repository
+    cd /etc/puppet
+    sudo git init
+    sudo git remote add origin https://github.com/ScottWales/arccss-servers
+    sudo git pull origin master
 
     # Clear out iptables to avoid puppet conflicts (can't purge ip6tables)
-    $remote iptables  -F
-    $remote ip6tables -F
-}
+    sudo iptables  -F
+    sudo ip6tables -F
+EOF
 
-# SSH to the host (possibly as a different user)
-function ssh {
-    local userathostname=$1
-    local userat=$(echo $userathostname | sed 's/\(\S*@\)\?\(\S*\)/\1/')
-    local hostname=$(echo $userathostname | sed 's/\(\S*@\)\?\(\S*\)/\2/')
-
-    # Cache ip
-    : ${ip:=$(cloudip $hostname)}
-    if [ -z "$ip" ]; then
-        echo "ERROR: Cannot find IP for host $hostname" >&2
-        exit -1
-    fi
-
-    shift
-    command ssh -t -o ProxyCommand="$proxy" -o GSSAPIAuthentication=no $userat$ip $*
+    # Now provision
+    provision $hostname
 }
 
 # Provision the host
 function provision {
     local hostname=$1
 
+    # Run commands as ec2-user with sudo
+    ssh ec2-user@$hostname << EOF
+    cd /etc/puppet
+    sed -n 's/^mod\s*"\(.*\)"/\1/p' Puppetfile | xargs -L 1 -t sudo puppet module install
+    puppet apply manifests/site.pp
+EOF
+}
+
+function shutdown {
+    local hostname=$1
+
+    nova delete "$hostname"
 }
 
 function help {

@@ -17,20 +17,23 @@
 
 # Apache-based subversion write-through proxy
 class roles::svnmirror (
-  $vhost = "svn.${::fqdn}",
+  $vhost    = "svn.${::fqdn}",
+  $repohome = '/svn',
 ) {
   include apache
+  include apache::mod::dav_svn
 
+  # Install subversion
   yumrepo {'wandisco':
     baseurl  => 'http://opensource.wandisco.com/rhel/6/svn-1.8/RPMS/',
     gpgkey   => 'http://opensource.wandisco.com/RPM-GPG-KEY-WANdisco',
     gpgcheck => 1,
     before   => Package['subversion'],
   }
-
   package {'subversion':
   }
 
+  # Setup vhost
   apache::vhost {'svn-redirect':
     servername      => $vhost,
     port            => '80',
@@ -38,11 +41,24 @@ class roles::svnmirror (
     redirect_dest   => "https://${vhost}/",
     docroot         => '/var/www/null',
   }
-
   apache::vhost {'svn-ssl':
-    servername      => $vhost,
-    port            => '443',
-    ssl             => true,
-    docroot         => '/var/www/html',
+    servername        => $vhost,
+    port              => '443',
+    ssl               => true,
+    docroot           => '/var/www/null',
+    directories       => [
+      {path           => '/',
+      handler         => 'location',
+      custom_fragment => "
+        DAV     svn
+        SVNPath ${repohome}",
+      }
+    ]
   }
+
+  # Setup repohome
+  file {$repohome:
+    ensure => directory,
+  }
+
 }

@@ -76,4 +76,9 @@ define roles::apache::vhost (
   concat {$directory_config:
     ensure => present,
   }
+  concat::fragment {"${directory_config} header":
+    target  => $directory_config,
+    order   => '00',
+    content => '# Configuration for Vhost directories, Managed by Puppet',
+  }
 }

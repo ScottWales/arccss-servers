@@ -19,6 +19,9 @@
 define roles::svnmirror::repo (
   $source = undef,
 ) {
+  include apache::mod::proxy
+  include apache::mod::proxy_http
+
   $repopath = "${roles::svnmirror::repohome}/${name}"
 
   vcsrepo {$repopath:

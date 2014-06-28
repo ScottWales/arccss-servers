@@ -19,20 +19,20 @@
 define roles::apache::directory (
   $vhost,
   $priority        = '20',
-  $path            = undef,
-  $handler         = undef,
-  $allow           = undef,
-  $deny            = undef,
-  $order           = undef,
-  $satisfy         = undef,
-  $headers         = undef,
-  $custom_fragment = undef,
+  $path            = false,
+  $handler         = false,
+  $allow           = false,
+  $deny            = false,
+  $order           = false,
+  $satisfy         = false,
+  $headers         = false,
+  $custom_fragment = '',
 ) {
 
-  $directory_config = "/etc/httpd/conf.d/${name}-directories"
+  $directory_config = "/etc/httpd/conf.d/${vhost}-directories"
 
   # Create the hash that the apache module expects
-  $directories = [{
+  $_directories = [{
     path            => $path,
     handler         => $handler,
     allow           => $allow,

@@ -3,4 +3,6 @@ classes:
  - roles::svnmirror
 
 roles::svnmirror::repositories:
-    test: {}
+    test:
+        source: https://localhost/origin
+    origin: {}

@@ -16,7 +16,10 @@
 #  limitations under the License.
 
 # Apache-based subversion write-through proxy
-class roles::svnmirror {
+class roles::svnmirror (
+  $vhost = "svn.${::fqdn}",
+) {
+  include apache
 
   yumrepo {'wandisco':
     baseurl  => 'http://opensource.wandisco.com/rhel/6/svn-1.8/RPMS/',
@@ -28,4 +31,18 @@ class roles::svnmirror {
   package {'subversion':
   }
 
+  apache::vhost {'svn-redirect':
+    servername      => $vhost,
+    port            => '80',
+    redirect_status => 'permanent',
+    redirect_dest   => "https://${vhost}/",
+    docroot         => '/var/www/null',
+  }
+
+  apache::vhost {'svn-ssl':
+    servername      => $vhost,
+    port            => '443',
+    ssl             => true,
+    docroot         => '/var/www/html',
+  }
 }

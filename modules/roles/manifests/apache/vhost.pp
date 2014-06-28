@@ -38,6 +38,8 @@ define roles::apache::vhost (
   $request_headers = undef,
   $aliases         = undef,
   $directories     = undef,
+  $redirect_status = undef,
+  $redirect_dest   = undef,
   $custom_fragment = undef,
 ) {
   include apache
@@ -65,6 +67,8 @@ define roles::apache::vhost (
     request_headers     => $request_headers,
     aliases             => $aliases,
     directories         => $directories,
+    redirect_status     => $redirect_status,
+    redirect_dest       => $redirect_dest,
     custom_fragment     => $custom_fragment,
     additional_includes => [$directory_config],
   }

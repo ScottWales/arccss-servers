@@ -20,7 +20,7 @@ class roles::svnmirror::vhost {
   include apache::mod::dav_svn
 
   # Setup vhost
-  apache::vhost {'svn-redirect':
+  roles::apache::vhost {'svn-redirect':
     servername      => $roles::svnmirror::vhost,
     port            => '80',
     redirect_status => 'permanent',

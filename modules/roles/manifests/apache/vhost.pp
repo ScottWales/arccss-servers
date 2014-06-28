@@ -46,7 +46,7 @@ define roles::apache::vhost (
 
   $directory_config = "/etc/httpd/conf.d/${name}-directories"
 
-  apache::vhost {$name:
+  ::apache::vhost {$name:
     ensure              => $ensure,
     port                => $port,
     docroot             => $docroot,

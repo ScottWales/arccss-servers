@@ -36,8 +36,8 @@ class roles::svnmirror::vhost {
       {path           => '/',
       handler         => 'location',
       custom_fragment => "
-        DAV     svn
-        SVNPath ${roles::svnmirror::repohome}",
+        DAV           svn
+        SVNParentPath ${roles::svnmirror::repohome}",
       }
     ]
   }

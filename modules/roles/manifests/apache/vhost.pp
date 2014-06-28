@@ -40,6 +40,7 @@ define roles::apache::vhost (
   $directories     = undef,
   $redirect_status = undef,
   $redirect_dest   = undef,
+  $ssl_proxyengine = undef,
   $custom_fragment = undef,
 ) {
   include apache
@@ -69,6 +70,7 @@ define roles::apache::vhost (
     directories         => $directories,
     redirect_status     => $redirect_status,
     redirect_dest       => $redirect_dest,
+    ssl_proxyengine     => $ssl_proxyengine,
     custom_fragment     => $custom_fragment,
     additional_includes => [$directory_config],
   }

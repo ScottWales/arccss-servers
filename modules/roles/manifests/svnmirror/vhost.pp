@@ -34,6 +34,7 @@ class roles::svnmirror::vhost {
     servername        => $roles::svnmirror::vhost,
     port              => '443',
     ssl               => true,
+    ssl_proxyengine   => true,
     docroot           => '/var/www/null',
     directories       => [
       {path           => '/',

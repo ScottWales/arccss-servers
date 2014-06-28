@@ -20,8 +20,8 @@ define roles::apache::directory (
   $vhost,
   $priority        = '20',
   $path            = false,
-  $handler         = false,
-  $allow           = false,
+  $provider        = false,
+  $allow           = 'from all',
   $deny            = false,
   $order           = false,
   $satisfy         = false,
@@ -34,7 +34,7 @@ define roles::apache::directory (
   # Create the hash that the apache module expects
   $_directories = [{
     path            => $path,
-    handler         => $handler,
+    provider        => $provider,
     allow           => $allow,
     deny            => $deny,
     order           => $order,

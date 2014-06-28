@@ -34,7 +34,7 @@ define roles::svnmirror::repo (
     roles::apache::directory {$name:
       vhost           => 'svn-ssl',
       path            => "/${name}",
-      handler         => 'location',
+      provider        => 'location',
       custom_fragment => "
         DAV          svn
         SVNPath      ${repopath}

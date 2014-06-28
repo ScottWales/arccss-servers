@@ -19,8 +19,25 @@
 define roles::svnmirror::repo (
   $source = undef,
 ) {
-  vcsrepo {"${roles::svnmirror::repohome}/${name}":
+  $repopath = "${roles::svnmirror::repohome}/${name}"
+
+  vcsrepo {$repopath:
     ensure   => present,
     provider => svn,
   }
+
+  if $source {
+    # Setup forward proxy for this repo
+    roles::apache::directory {$name:
+      vhost           => 'svn-ssl',
+      path            => "/${name}",
+      handler         => 'location',
+      custom_fragment => "
+        DAV          svn
+        SVNPath      ${repopath}
+        SVNMasterURI ${source}
+      ",
+    }
+  }
+
 }

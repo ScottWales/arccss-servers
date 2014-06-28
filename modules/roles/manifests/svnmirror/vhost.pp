@@ -27,7 +27,10 @@ class roles::svnmirror::vhost {
     redirect_dest   => "https://${roles::svnmirror::vhost}/",
     docroot         => '/var/www/null',
   }
-  apache::vhost {'svn-ssl':
+
+  # Use our own vhost wrapper so we can customise locations in the
+  # 'roles::svnmirror::repo' define
+  roles::apache::vhost {'svn-ssl':
     servername        => $roles::svnmirror::vhost,
     port              => '443',
     ssl               => true,
@@ -36,8 +39,9 @@ class roles::svnmirror::vhost {
       {path           => '/',
       handler         => 'location',
       custom_fragment => "
-        DAV           svn
-        SVNParentPath ${roles::svnmirror::repohome}",
+        DAV               svn
+        SVNParentPath     ${roles::svnmirror::repohome}
+        SVNListParentPath on",
       }
     ]
   }

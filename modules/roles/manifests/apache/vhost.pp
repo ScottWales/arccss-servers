@@ -75,6 +75,7 @@ define roles::apache::vhost (
 
   concat {$directory_config:
     ensure => present,
+    notify => Service['httpd'],
   }
   concat::fragment {"${directory_config} header":
     target  => $directory_config,

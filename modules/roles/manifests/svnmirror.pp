@@ -16,49 +16,31 @@
 #  limitations under the License.
 
 # Apache-based subversion write-through proxy
+
+# Add repositories with the 'repositories' hash, e.g. in hiera
+#
+# roles::svnmirror::repositories:
+#    coecss-servers:
+#      source: https://github.com/ScottWales/coecss-servers
+#
+# will create a repository named 'coecss-servers' available at
+# https://$vhost/coecss-servers that mirrors the contents of the repo defined
+# by 'source'
+
 class roles::svnmirror (
-  $vhost    = "svn.${::fqdn}",
-  $repohome = '/svn',
+  $vhost        = "svn.${::fqdn}",
+  $repohome     = '/svn',
+  $repositories = {}
 ) {
-  include apache
-  include apache::mod::dav_svn
-
-  # Install subversion
-  yumrepo {'wandisco':
-    baseurl  => 'http://opensource.wandisco.com/rhel/6/svn-1.8/RPMS/',
-    gpgkey   => 'http://opensource.wandisco.com/RPM-GPG-KEY-WANdisco',
-    gpgcheck => 1,
-    before   => Package['subversion'],
-  }
-  package {'subversion':
-  }
-
-  # Setup vhost
-  apache::vhost {'svn-redirect':
-    servername      => $vhost,
-    port            => '80',
-    redirect_status => 'permanent',
-    redirect_dest   => "https://${vhost}/",
-    docroot         => '/var/www/null',
-  }
-  apache::vhost {'svn-ssl':
-    servername        => $vhost,
-    port              => '443',
-    ssl               => true,
-    docroot           => '/var/www/null',
-    directories       => [
-      {path           => '/',
-      handler         => 'location',
-      custom_fragment => "
-        DAV     svn
-        SVNPath ${repohome}",
-      }
-    ]
-  }
+  include roles::svnmirror::package
+  include roles::svnmirror::vhost
 
   # Setup repohome
   file {$repohome:
     ensure => directory,
   }
+
+  # Setup repos
+  create_resources('roles::svnmirror::repo',$repositories)
 
 }

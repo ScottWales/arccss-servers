@@ -14,11 +14,6 @@ node default {
     before  => Class['roles::firewall::post'],
   }
 
-  # Root mail alias
-  mailalias {'root':
-    recipient => 'saw562@anusf.nci.org.au',
-  }
-
   # Package pre-requisites
   package {'rubygems':}
   Package['rubygems'] -> Package<|provider == gem|>

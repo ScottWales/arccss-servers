@@ -1,4 +1,4 @@
-## \file    modules/common/init.pp
+## \file    modules/roles/manifests/svnmirror/repo.pp
 #  \author  Scott Wales <scott.wales@unimelb.edu.au>
 #
 #  Copyright 2014 ARC Centre of Excellence for Climate Systems Science
@@ -15,31 +15,31 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Common stuff for all servers
-class roles::common (
-  $fqdn = $::fqdn,
+# Create a new repo under $repohome
+define roles::svnmirror::repo (
+  $source = undef,
 ) {
-  # Firewall
-  include roles::firewall
+  include apache::mod::proxy
+  include apache::mod::proxy_http
 
-  # Yum updates
-  cron {'yum update':
-    command => '/usr/bin/yum update --assumeyes',
-    user    => 'root',
-    hour    => 1,
-    minute  => 0,
+  $repopath = "${roles::svnmirror::repohome}/${name}"
+
+  vcsrepo {$repopath:
+    ensure   => present,
+    provider => svn,
   }
 
-  # Setup hostname
-  if $::ec2_public_ipv4 {
-    host {$fqdn:
-      ip           => $::ec2_public_ipv4,
-      host_aliases => $::hostname,
-    }
-  } else {
-    host {$fqdn:
-      ip           => $::ipaddress,
-      host_aliases => $::hostname,
+  if $source {
+    # Setup forward proxy for this repo
+    roles::apache::directory {$name:
+      vhost           => 'svn-ssl',
+      path            => "/${name}",
+      provider        => 'location',
+      custom_fragment => "
+        DAV          svn
+        SVNPath      ${repopath}
+        SVNMasterURI ${source}
+      ",
     }
   }
 

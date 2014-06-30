@@ -16,16 +16,31 @@
 #  limitations under the License.
 
 # Apache-based subversion write-through proxy
-class roles::svnmirror {
 
-  yumrepo {'wandisco':
-    baseurl  => 'http://opensource.wandisco.com/rhel/6/svn-1.8/RPMS/',
-    gpgkey   => 'http://opensource.wandisco.com/RPM-GPG-KEY-WANdisco',
-    gpgcheck => 1,
-    before   => Package['subversion'],
+# Add repositories with the 'repositories' hash, e.g. in hiera
+#
+# roles::svnmirror::repositories:
+#    coecss-servers:
+#      source: https://github.com/ScottWales/coecss-servers
+#
+# will create a repository named 'coecss-servers' available at
+# https://$vhost/coecss-servers that mirrors the contents of the repo defined
+# by 'source'
+
+class roles::svnmirror (
+  $vhost        = "svn.${::fqdn}",
+  $repohome     = '/svn',
+  $repositories = {}
+) {
+  include roles::svnmirror::package
+  include roles::svnmirror::vhost
+
+  # Setup repohome
+  file {$repohome:
+    ensure => directory,
   }
 
-  package {'subversion':
-  }
+  # Setup repos
+  create_resources('roles::svnmirror::repo',$repositories)
 
 }

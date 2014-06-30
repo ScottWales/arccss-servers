@@ -1,4 +1,8 @@
-Subversion mirror for the UM
 ---
 classes:
- - roles::svnserve
+ - roles::svnmirror
+
+roles::svnmirror::repositories:
+    test:
+        source: https://localhost/origin
+    origin: {}

@@ -1,4 +1,4 @@
-## \file    modules/common/init.pp
+## \file    modules/roles/manifests/svnmirror/package.pp
 #  \author  Scott Wales <scott.wales@unimelb.edu.au>
 #
 #  Copyright 2014 ARC Centre of Excellence for Climate Systems Science
@@ -15,32 +15,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Common stuff for all servers
-class roles::common (
-  $fqdn = $::fqdn,
-) {
-  # Firewall
-  include roles::firewall
-
-  # Yum updates
-  cron {'yum update':
-    command => '/usr/bin/yum update --assumeyes',
-    user    => 'root',
-    hour    => 1,
-    minute  => 0,
+class roles::svnmirror::package {
+  # Install subversion
+  yumrepo {'wandisco':
+    baseurl  => 'http://opensource.wandisco.com/rhel/6/svn-1.8/RPMS/',
+    gpgkey   => 'http://opensource.wandisco.com/RPM-GPG-KEY-WANdisco',
+    gpgcheck => 1,
+    before   => Package['subversion'],
   }
-
-  # Setup hostname
-  if $::ec2_public_ipv4 {
-    host {$fqdn:
-      ip           => $::ec2_public_ipv4,
-      host_aliases => $::hostname,
-    }
-  } else {
-    host {$fqdn:
-      ip           => $::ipaddress,
-      host_aliases => $::hostname,
-    }
+  package {'subversion':
   }
-
 }

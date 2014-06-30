@@ -1,4 +1,4 @@
-## \file    modules/common/init.pp
+## \file    modules/roles/manifests/common/admins.pp
 #  \author  Scott Wales <scott.wales@unimelb.edu.au>
 #
 #  Copyright 2014 ARC Centre of Excellence for Climate Systems Science
@@ -15,32 +15,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Common stuff for all servers
-class roles::common (
-  $fqdn = $::fqdn,
-) {
-  # Firewall
-  include roles::firewall
+# Setup system admins
 
-  # Yum updates
-  cron {'yum update':
-    command => '/usr/bin/yum update --assumeyes',
-    user    => 'root',
-    hour    => 1,
-    minute  => 0,
+class roles::common::admins {
+  $adminhash = hiera_hash('admins',{})
+
+  create_resources('roles::common::admins::admin', $adminhash)
+
+  # Send root mail to admins
+  $adminnames = keys($adminhash)
+  mailalias {'root':
+    recipient => $adminnames,
   }
-
-  # Setup hostname
-  if $::ec2_public_ipv4 {
-    host {$fqdn:
-      ip           => $::ec2_public_ipv4,
-      host_aliases => $::hostname,
-    }
-  } else {
-    host {$fqdn:
-      ip           => $::ipaddress,
-      host_aliases => $::hostname,
-    }
-  }
-
 }

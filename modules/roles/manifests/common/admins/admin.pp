@@ -1,4 +1,4 @@
-## \file    modules/common/init.pp
+## \file    modules/roles/manifests/common/admins/admin.pp
 #  \author  Scott Wales <scott.wales@unimelb.edu.au>
 #
 #  Copyright 2014 ARC Centre of Excellence for Climate Systems Science
@@ -15,32 +15,33 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Common stuff for all servers
-class roles::common (
-  $fqdn = $::fqdn,
+# Setup a single admin
+define roles::common::admins::admin (
+  $home = "/home/${name}",
+  $mail = undef,
+  $sudo = false,
+  $authorized_keys = {},
 ) {
-  # Firewall
-  include roles::firewall
 
-  # Yum updates
-  cron {'yum update':
-    command => '/usr/bin/yum update --assumeyes',
-    user    => 'root',
-    hour    => 1,
-    minute  => 0,
+  # Create user
+  user {$name:
+    ensure     => present,
+    home       => $home,
+    managehome => true,
   }
 
-  # Setup hostname
-  if $::ec2_public_ipv4 {
-    host {$fqdn:
-      ip           => $::ec2_public_ipv4,
-      host_aliases => $::hostname,
-    }
-  } else {
-    host {$fqdn:
-      ip           => $::ipaddress,
-      host_aliases => $::hostname,
+  # Setup admin mail address
+  if $mail {
+    mailalias {$name:
+      recipient => $mail,
     }
   }
 
+  # Setup keys
+  Ssh_authorized_key{
+    user    => $name,
+    require => User[$name],
+  }
+
+  create_resources('ssh_authorized_key', $authorized_keys)
 }

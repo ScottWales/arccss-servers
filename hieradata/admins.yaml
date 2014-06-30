@@ -1,0 +1,12 @@
+---
+admins:
+    swales:
+        mail: saw562@anusf.nci.org.au
+        sudo: true
+        authorized_keys:
+            swales@walesnix:
+                type: ssh-rsa
+                key:  AAAAB3NzaC1yc2EAAAADAQABAAABAQC66UV5uI+2k1WtgefX33ugqS+6trtMnD3bzkQZm6hCRe1Zjt8cABiBx06yNRECjTYX1Crfh8sOzwFTH6NlhF0oEg4iSv3WWutAOROONoKKsMFr0m3e31dUVwf0BrpuCt0HqJ/Z+lKgzB6Cz1vPTjfMjn2ut0So3u3zTpZjIYputEweAjF/FQEzlNjx9FmMcOMC0XrEDYdMrKq/9dwmXHT/4W6w9LC4sBsXVB+Cs2xcmxoD+K5j1PlUUIM9ffJxU5uGF90eR2GH3ZM2+R34uE/8LQutE3ctRDM+sHOrhyMFo+4Hqc0QtyWkBF/IGa5tfd0MNxKKuh/1l6SHQW2gLbaL
+            swales@home:
+                type: ssh-rsa 
+                key:  AAAAB3NzaC1yc2EAAAADAQABAAABAQDoF0afTQGvG1QFhAWVBaCPzEQS/OaOMbbga4ifvtlRjzPQcoWRdFh6+whG6o62puI7gLYohSAlMVZLuKk+vhYDn0t5dpiF6+w6YHcJnQ4D2DpdQcVWud4RQnyjnqPKUsKpBuRqkcf7qiFkNcCgQUgxr3dgb4NtVgsaaiDTxBlXU5h2O/wYfY1N/guJ4+MUjCvZR8VDwY8PyE9TPlZoJaIXAk245XC9MqcNvGxetMZDEuq0xug+hbryu2/0IhtkBrDc61bh8uVjPNrH41Eymib3wxFxlT9tpiUUL2ZWHFQM/Dz32OaWPPqKLjsuRrjX/QzENdM3V5UWwp+XlQp5Q8Uh

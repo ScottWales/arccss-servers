@@ -31,7 +31,7 @@ class roles::jenkins (
   include ::roles::jenkins::backup
 
   # Open a port for the proxy
-  firewall {'proxy to jenkins':
+  firewall {'500 proxy to jenkins':
     source => $proxyip,
     port   => 8080,
     action => accept,

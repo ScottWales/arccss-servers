@@ -27,7 +27,7 @@ class roles::jenkins::dockerimage {
 
   # Create a ssh key
   exec {'jenkins ssh key':
-    command => "ssh-keygen -t rsa -F ${roles::jenkins::home}/.ssh/id_rsa -P ''",
+    command => "ssh-keygen -t rsa -f ${roles::jenkins::home}/.ssh/id_rsa -P ''",
     user    => 'jenkins',
     path    => ['/bin','/usr/bin'],
     creates => "${roles::jenkins::home}/.ssh/id_rsa",

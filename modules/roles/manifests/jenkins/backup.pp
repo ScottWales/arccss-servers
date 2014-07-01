@@ -19,9 +19,10 @@ class roles::jenkins::backup {
   include roles::common::backup
 
   # Sync $JENKINS_HOME to backups folder hourly
-  cron {"rsync -a --delete ${roles::jenkins::home}/ ${roles::common::backup::path}/jenkins/":
-    user   => root,
-    minute => 0,
+  cron {'jenkins-backup':
+    command => "rsync -a --delete ${roles::jenkins::home}/ ${roles::common::backup::path}/jenkins/",
+    user    => root,
+    minute  => 0,
   }
 
 }

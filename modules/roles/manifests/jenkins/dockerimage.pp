@@ -19,11 +19,19 @@
 class roles::jenkins::dockerimage {
   include ::docker
 
+  file {"${roles::jenkins::home}/.ssh":
+    ensure  => directory,
+    owner   => 'jenkins',
+    require => Package['jenkins'],
+  }
+
   # Create a ssh key
   exec {'jenkins ssh key':
     command => "ssh-keygen -t rsa -F ${roles::jenkins::home}/.ssh/id_rsa -P ''",
+    user    => 'jenkins',
     path    => ['/bin','/usr/bin'],
     creates => "${roles::jenkins::home}/.ssh/id_rsa",
+    require => File["${roles::jenkins::home}/.ssh"],
   }
 
   # Save the dockerfile locally

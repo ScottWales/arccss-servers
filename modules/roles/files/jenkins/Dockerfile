@@ -14,7 +14,7 @@ RUN adduser --quiet jenkins
 
 # Add ssh key
 ADD id_rsa.pub /tmp/id_rsa.pub
-RUN cat /tmp/id_rsa.pub >> /home/jenkins/.ssh/authorized_keys
+RUN mkdir -p /home/jenkins/.ssh && cat /tmp/id_rsa.pub >> /home/jenkins/.ssh/authorized_keys
 
 # Grant sudo access
 RUN echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers

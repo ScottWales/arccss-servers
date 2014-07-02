@@ -26,11 +26,12 @@ class roles::jenkins::config {
   augeas {'jenkins base':
     lens    => 'Xml.lns',
     incl    => "${roles::jenkins::home}/config.xml",
-    context => "/files/${roles::jenkins::home}/config.xml/hudson",
+    context => "/files/${roles::jenkins::home}/config.xml",
     changes => [
-      'set numExecutors/#text "0"',
-      'set useSecurity/#text true',
-      'set securityRealm ""',
+      'set hudson ""',
+      'set hudson/numExecutors/#text "0"',
+      'set hudson/useSecurity/#text true',
+      'set hudson/securityRealm ""',
     ],
     require => File["${roles::jenkins::home}/config.xml"],
     notify  => Service['jenkins'],

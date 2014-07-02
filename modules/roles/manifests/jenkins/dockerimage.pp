@@ -34,25 +34,29 @@ class roles::jenkins::dockerimage {
     require => File["${roles::jenkins::home}/.ssh"],
   }
 
+  file {'/tmp/jenkins-docker':
+    ensure => directory,
+  }
+
   # Save the dockerfile locally
-  file {'/tmp/jenkins-dockerfile':
+  file {'/tmp/jenkins-docker/Dockerfile':
     ensure => present,
     source => 'puppet:///modules/roles/jenkins/Dockerfile',
   }
-  file {'/tmp/jenkins.id_rsa.pub':
+  file {'/tmp/jenkins-docker/id_rsa.pub':
     ensure  => present,
     source  => "${roles::jenkins::home}/.ssh/id_rsa.pub",
     require => Exec['jenkins ssh key'],
   }
 
   # Build the image
-  exec {'docker build -t jenkins-slave - < /tmp/jenkins-dockerfile':
+  exec {'docker build -t jenkins-slave /tmp/jenkins-docker':
     path    => ['/bin','/usr/bin'],
     unless  => 'docker images | grep \'^jenkins-slave\>\'',
     require => [
       File[
-        '/tmp/jenkins-dockerfile',
-        '/tmp/jenkins.id_rsa.pub'
+        '/tmp/jenkins-docker/Dockerfile',
+        '/tmp/jenkins-docker/id_rsa.pub'
       ],
       Package['docker'],
     ]

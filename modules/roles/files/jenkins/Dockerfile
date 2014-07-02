@@ -1,6 +1,8 @@
 # Baseimage sets us up with a SSH server, init system, etc.
 FROM phusion/baseimage
 
+RUN apt-get update
+
 # Install JDK for Jenkins
 RUN apt-get install -y --no-install-recommends openjdk-7-jdk
 
@@ -11,7 +13,7 @@ RUN apt-get install -y git subversion gcc gfortran python
 RUN adduser --quiet jenkins
 
 # Add ssh key
-ADD jenkins.id_rsa.pub /tmp/id_rsa.pub
+ADD id_rsa.pub /tmp/id_rsa.pub
 RUN cat /tmp/id_rsa.pub >> /home/jenkins/.ssh/authorized_keys
 
 # Grant sudo access

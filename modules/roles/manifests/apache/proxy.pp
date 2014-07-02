@@ -27,6 +27,9 @@ define roles::apache::proxy (
   $url,
   $priority = '10',
 ) {
+  include ::apache::mod::proxy
+  include ::apache::mod::proxy_http
+
   $directory_config = "/etc/httpd/conf.d/${vhost}-directories"
 
   $proxy_pass = {

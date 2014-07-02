@@ -38,7 +38,7 @@ class roles::common (
     }
   } else {
     host {$fqdn:
-      ip           => $::ipaddress,
+      ip           => $::ipaddress_eth0,
       host_aliases => $::hostname,
     }
   }

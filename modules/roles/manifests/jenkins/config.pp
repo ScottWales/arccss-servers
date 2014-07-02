@@ -27,6 +27,7 @@ class roles::jenkins::config {
     group   => 'jenkins',
     content => template('roles/jenkins/config.xml.erb'),
     require => Package['jenkins'],
+    notify  => Service['jenkins'],
   }
   file {"${roles::jenkins::home}/hudson.tasks.Mailer.xml":
     ensure  => present,
@@ -35,5 +36,6 @@ class roles::jenkins::config {
     group   => 'jenkins',
     content => template('roles/jenkins/hudson.tasks.Mailer.xml.erb'),
     require => Package['jenkins'],
+    notify  => Service['jenkins'],
   }
 }

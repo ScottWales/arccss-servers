@@ -18,6 +18,11 @@
 # Some basic config for bootstrapping
 class roles::jenkins::config {
 
+  file {"${roles::jenkins::home}/config.xml":
+    owner   => 'jenkins',
+    require => Package['jenkins'],
+  }
+
   augeas {'jenkins base':
     lens    => 'Xml.lns',
     incl    => "${roles::jenkins::home}/config.xml",
@@ -27,7 +32,7 @@ class roles::jenkins::config {
       'set useSecurity/#text true',
       'set securityRealm ""',
     ],
-    require => Package['jenkins'],
+    require => File["${roles::jenkins::home}/config.xml"],
     notify  => Service['jenkins'],
   }
 
@@ -50,13 +55,17 @@ class roles::jenkins::config {
     notify  => Service['jenkins'],
   }
 
+  file {"${roles::jenkins::home}/hudson.tasks.Mailer.xml":
+    owner   => 'jenkins',
+    require => Package['jenkins'],
+  }
   augeas {'jenkins mail':
     lens    => 'Xml.lns',
     incl    => "${roles::jenkins::home}/hudson.tasks.Mailer.xml",
     changes => [
       'set hudson.tasks.Mailer_-DescriptorImpl/defaultSuffix/#text "@anusf.anu.edu.au"',
     ],
-    require => Package['jenkins'],
+    require => File["${roles::jenkins::home}/hudson.tasks.Mailer.xml"],
     notify  => Service['jenkins'],
   }
 }

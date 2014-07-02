@@ -59,7 +59,8 @@ class roles::jenkins::dockerimage {
         '/tmp/jenkins-docker/id_rsa.pub'
       ],
       Package['docker'],
-    ]
+    ],
+    timeout => 0,
   }
 
 }

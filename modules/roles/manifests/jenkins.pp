@@ -37,7 +37,7 @@ class roles::jenkins (
     action => accept,
   }
 
-  @@::roles::apache::proxy {'/jenkins':
+  @::roles::apache::proxy {'/jenkins':
     vhost => 'proxy',
     url   => "http://${ipaddress_eth0}:8080"
   }

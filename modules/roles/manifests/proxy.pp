@@ -38,7 +38,7 @@ class roles::proxy(
   }
 
   # Collect locations & proxies for the vhost
-  ::Roles::Apache::Proxy     <<| vhost == 'proxy' |>>
-  ::Roles::Apache::Directory <<| vhost == 'proxy' |>>
+  ::Roles::Apache::Proxy     <| vhost == 'proxy' |>
+  ::Roles::Apache::Directory <| vhost == 'proxy' |>
 
 }

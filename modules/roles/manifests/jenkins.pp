@@ -39,7 +39,7 @@ class roles::jenkins (
 
   @::roles::apache::proxy {'/jenkins':
     vhost => 'proxy',
-    url   => "http://${ipaddress_eth0}:8080/jenkins"
+    url   => "http://${ipaddress_eth0}:8080/jenkins nocanon"
   }
 
 }

@@ -1,4 +1,4 @@
-## \file    modules/roles/manifests/jenkins.pp
+## \file    modules/roles/manifests/proxy.pp
 #  \author  Scott Wales <scott.wales@unimelb.edu.au>
 #
 #  Copyright 2014 ARC Centre of Excellence for Climate Systems Science
@@ -15,31 +15,30 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Sets up a Jenkins install with NCI LDAP auth, and builds a Docker image to
-# use as a build slave
-
-class roles::jenkins (
-  $proxyip = '127.0.0.1',
+class roles::proxy(
+  $vhost = $::fqdn,
 ) {
+  include ::apache
 
-  # Hardcoded by Jenkins module
-  $home    = '/var/lib/jenkins'
-
-  include ::jenkins
-  include ::roles::jenkins::dockerimage
-  include ::roles::jenkins::config
-  include ::roles::jenkins::backup
-
-  # Open a port for the proxy
-  firewall {'500 proxy to jenkins':
-    source => $proxyip,
-    port   => 8080,
-    action => accept,
+  # Forward http connections to https
+  ::roles::apache::vhost {'proxy-redirect':
+    servername      => $vhost,
+    port            => 80,
+    redirect_status => permanent,
+    redirect_dest   => "https://${vhost}/",
+    docroot         => '/var/www/null',
   }
 
-  @@::roles::apache::proxy {'/jenkins':
-    vhost => 'proxy',
-    url   => "http://${ipaddress_eth0}:8080"
+  # Proxy vhost
+  ::roles::apache::vhost {'proxy':
+    servername => $vhost,
+    port       => 443,
+    ssl        => true,
+    docroot    => '/var/www/null',
   }
+
+  # Collect locations & proxies for the vhost
+  ::Roles::Apache::Proxy     <<| vhost == 'proxy' |>>
+  ::Roles::Apache::Directory <<| vhost == 'proxy' |>>
 
 }

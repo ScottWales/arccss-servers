@@ -1,4 +1,4 @@
-## \file    modules/roles/manifests/apache/directory.pp
+## \file    modules/roles/manifests/apache/proxy.pp
 #  \author  Scott Wales <scott.wales@unimelb.edu.au>
 #
 #  Copyright 2014 ARC Centre of Excellence for Climate Systems Science
@@ -15,40 +15,28 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Create a directory/location segment in a vhost
+# Create a http proxy on a vhost
+#
+# roles::apache::proxy {'/jenkins':
+#   vhost => 'proxy',
+#   url   => 'http://jenkins.local:8080',
+# }
 
-define roles::apache::directory (
+define roles::apache::proxy (
   $vhost,
-  $priority        = '20',
-  $path            = false,
-  $provider        = false,
-  $allow           = 'from all',
-  $deny            = false,
-  $order           = false,
-  $satisfy         = false,
-  $headers         = false,
-  $custom_fragment = '',
+  $url,
+  $priority = '10',
 ) {
-
   $directory_config = "/etc/httpd/conf.d/${vhost}-directories"
 
-  # Create the hash that the apache module expects
-  $_directories = [{
-    path            => $path,
-    provider        => $provider,
-    allow           => $allow,
-    deny            => $deny,
-    order           => $order,
-    satisfy         => $satisfy,
-    headers         => $headers,
-    custom_fragment => $custom_fragment,
-  }]
-
-  # Use the apache directory template for the config
-  concat::fragment {$name:
-    target  => $directory_config,
-    content => template('apache/vhost/_directories.erb'),
-    order   => $priority,
+  $proxy_pass = {
+    'path' => $name,
+    'url'  => $url,
   }
 
+  concat::fragment {$name:
+    target  => $directory_config,
+    content => template('apache/vhost/_proxy.erb'),
+    order   => $priority,
+  }
 }

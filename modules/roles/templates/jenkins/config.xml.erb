@@ -1,57 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <hudson>
-  <disabledAdministrativeMonitors/>
-  <version>1.0</version>
-  <numExecutors>2</numExecutors>
+  <disabledAdministrativeMonitors>
+    <string>hudson.diagnosis.ReverseProxySetupMonitor</string>
+  </disabledAdministrativeMonitors>
+  <version>1.570</version>
+  <numExecutors>0</numExecutors>
   <mode>NORMAL</mode>
   <useSecurity>true</useSecurity>
-  <authorizationStrategy class="hudson.security.GlobalMatrixAuthorizationStrategy">
-    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Create:saw562</permission>
-    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Delete:saw562</permission>
-    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.ManageDomains:saw562</permission>
-    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Update:saw562</permission>
-    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.View:saw562</permission>
-    <permission>hudson.model.Computer.Build:saw562</permission>
-    <permission>hudson.model.Computer.Configure:saw562</permission>
-    <permission>hudson.model.Computer.Connect:saw562</permission>
-    <permission>hudson.model.Computer.Create:saw562</permission>
-    <permission>hudson.model.Computer.Delete:saw562</permission>
-    <permission>hudson.model.Computer.Disconnect:saw562</permission>
-    <permission>hudson.model.Hudson.Administer:saw562</permission>
-    <permission>hudson.model.Hudson.ConfigureUpdateCenter:saw562</permission>
-    <permission>hudson.model.Hudson.Read:authenticated</permission>
-    <permission>hudson.model.Hudson.Read:saw562</permission>
-    <permission>hudson.model.Hudson.RunScripts:saw562</permission>
-    <permission>hudson.model.Hudson.UploadPlugins:saw562</permission>
-    <permission>hudson.model.Item.Build:authenticated</permission>
-    <permission>hudson.model.Item.Build:saw562</permission>
-    <permission>hudson.model.Item.Cancel:authenticated</permission>
-    <permission>hudson.model.Item.Cancel:saw562</permission>
-    <permission>hudson.model.Item.Configure:authenticated</permission>
-    <permission>hudson.model.Item.Configure:saw562</permission>
-    <permission>hudson.model.Item.Create:authenticated</permission>
-    <permission>hudson.model.Item.Create:saw562</permission>
-    <permission>hudson.model.Item.Delete:authenticated</permission>
-    <permission>hudson.model.Item.Delete:saw562</permission>
-    <permission>hudson.model.Item.Discover:authenticated</permission>
-    <permission>hudson.model.Item.Discover:saw562</permission>
-    <permission>hudson.model.Item.Read:authenticated</permission>
-    <permission>hudson.model.Item.Read:saw562</permission>
-    <permission>hudson.model.Item.Workspace:authenticated</permission>
-    <permission>hudson.model.Item.Workspace:saw562</permission>
-    <permission>hudson.model.Run.Delete:authenticated</permission>
-    <permission>hudson.model.Run.Delete:saw562</permission>
-    <permission>hudson.model.Run.Update:authenticated</permission>
-    <permission>hudson.model.Run.Update:saw562</permission>
-    <permission>hudson.model.View.Configure:authenticated</permission>
-    <permission>hudson.model.View.Configure:saw562</permission>
-    <permission>hudson.model.View.Create:authenticated</permission>
-    <permission>hudson.model.View.Create:saw562</permission>
-    <permission>hudson.model.View.Delete:authenticated</permission>
-    <permission>hudson.model.View.Delete:saw562</permission>
-    <permission>hudson.model.View.Read:authenticated</permission>
-    <permission>hudson.model.View.Read:saw562</permission>
-  </authorizationStrategy>
+  <authorizationStrategy class="hudson.security.FullControlOnceLoggedInAuthorizationStrategy"/>
   <securityRealm class="hudson.security.LDAPSecurityRealm" plugin="ldap@1.6">
     <server>ldap://sfldap0.anu.edu.au</server>
     <rootDN>dc=apac,dc=edu,dc=au</rootDN>
@@ -65,12 +21,19 @@
   <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>
   <workspaceDir>${JENKINS_HOME}/workspace/${ITEM_FULLNAME}</workspaceDir>
   <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
-  <markupFormatter class="hudson.markup.EscapedMarkupFormatter"/>
+  <systemMessage>&lt;img src=&quot;http://www.climatescience.org.au/sites/all/themes/coeclean/images/coe/logo_coecss.jpg&quot;&gt;&#xd;
+&#xd;
+&lt;h1&gt;ARCCSS CMS Build Server&lt;/h1&gt;&#xd;
+</systemMessage>
+  <markupFormatter class="hudson.markup.RawHtmlMarkupFormatter" plugin="antisamy-markup-formatter@1.1">
+    <disableSyntaxHighlighting>false</disableSyntaxHighlighting>
+  </markupFormatter>
   <jdks/>
   <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
   <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
   <clouds/>
   <slaves/>
+  <quietPeriod>5</quietPeriod>
   <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
   <views>
     <hudson.model.AllView>

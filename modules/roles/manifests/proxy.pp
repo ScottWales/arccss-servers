@@ -19,6 +19,7 @@ class roles::proxy(
   $vhost = $::fqdn,
 ) {
   include ::apache
+  include ::roles::webserver
 
   # Forward http connections to https
   ::roles::apache::vhost {'proxy-redirect':

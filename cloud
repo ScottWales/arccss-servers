@@ -76,6 +76,7 @@ function boot {
             --flavor    "$flavor" \
             --key_name  "$keypair" \
             --user_data "userdata.sh" \
+            --security-groups "ssh,http" \
             --poll
     fi
     

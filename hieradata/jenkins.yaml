@@ -1,5 +1,6 @@
 ---
 classes:
+    - roles::puppetmaster
     - roles::jenkins
 
 packages:

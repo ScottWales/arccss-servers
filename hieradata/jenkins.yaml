@@ -11,3 +11,5 @@ jenkins::configure_firewall: false
 
 docker::tcp_bind: 'tcp://127.0.0.1:4243'
 
+roles::proxy::vhost: '130.56.244.115'
+

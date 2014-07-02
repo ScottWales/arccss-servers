@@ -2,6 +2,7 @@
 classes:
     - roles::puppetmaster
     - roles::jenkins
+    - roles::proxy
 
 packages:
     - git

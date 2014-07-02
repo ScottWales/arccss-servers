@@ -15,58 +15,25 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Some basic config for bootstrapping
+# Some basic config for bootstrapping, updates to these will be saved through
+# backups
+
 class roles::jenkins::config {
 
   file {"${roles::jenkins::home}/config.xml":
+    ensure  => present,
+    replace => false,
     owner   => 'jenkins',
+    group   => 'jenkins',
+    content => template('roles/jenkins/config.xml.erb'),
     require => Package['jenkins'],
   }
-
-  augeas {'jenkins base':
-    lens    => 'Xml.lns',
-    incl    => "${roles::jenkins::home}/config.xml",
-    context => "/files/${roles::jenkins::home}/config.xml",
-    changes => [
-      'set hudson ""',
-      'set hudson/numExecutors/#text "0"',
-      'set hudson/useSecurity/#text true',
-      'set hudson/securityRealm ""',
-    ],
-    require => File["${roles::jenkins::home}/config.xml"],
-    notify  => Service['jenkins'],
-  }
-
-  # Configure security
-  augeas {'jenkins security':
-    lens    => 'Xml.lns',
-    incl    => "${roles::jenkins::home}/config.xml",
-    context => "/files/${roles::jenkins::home}/config.xml/hudson/securityRealm",
-    changes => [
-      'set #attribute/class hudson.security.LDAPSecurityRealm',
-      'set #attribute/plugin ldap@1.10.2',
-      'set server/#text ldap://sfldap0.anu.edu.au',
-      'set rootDN/#text dc=apac,dc=edu,dc=au',
-      'set userSearchBase/#text ou=People',
-      'set userSearch/#text uid={0}',
-      'set groupSearchBase/#text ou=Group',
-      'set disableMailAddressResolver/#text true',
-    ],
-    require => Augeas['jenkins base'],
-    notify  => Service['jenkins'],
-  }
-
   file {"${roles::jenkins::home}/hudson.tasks.Mailer.xml":
+    ensure  => present,
+    replace => false,
     owner   => 'jenkins',
+    group   => 'jenkins',
+    content => template('roles/jenkins/hudson.tasks.Mailer.xml.erb'),
     require => Package['jenkins'],
-  }
-  augeas {'jenkins mail':
-    lens    => 'Xml.lns',
-    incl    => "${roles::jenkins::home}/hudson.tasks.Mailer.xml",
-    changes => [
-      'set hudson.tasks.Mailer_-DescriptorImpl/defaultSuffix/#text "@anusf.anu.edu.au"',
-    ],
-    require => File["${roles::jenkins::home}/hudson.tasks.Mailer.xml"],
-    notify  => Service['jenkins'],
   }
 }

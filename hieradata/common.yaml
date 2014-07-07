@@ -6,13 +6,22 @@ classes:
     - roles::common::backup
     - roles::firewall::ssh
 
-apache::default_mods: false
-apache::default_vhost: false
-apache::default_confd_files: false
-apache::mod::authnz_ldap::verifyServerCert: false
+# Apache
+apache::default_mods:                        false
+apache::default_vhost:                       false
+apache::default_confd_files:                 false
+apache::mod::authnz_ldap::verifyServerCert:  false
+# Hostname to use for the proxy vhost
+roles::proxy::vhost:                        '%{::ipaddress_eth0}'
+
+# Backups
+amanda::client::server:                     'walesnix.earthsci.unimelb.edu.au'
+amanda::client::remote_user:                'backup'
+amanda::ssh_authorized_key::key:            'AAAAB3NzaC1yc2EAAAADAQABAAABAQDqp2BfHPXR02CjODE0gHJjTcd+d1e2SXUjjpRe8twVeQrcjFTvVwGJOENSyGeoccUPVzkcz0i/9ZaAljam1782t2o63Olt/bAYcp+njMCKtz1QTEVT6glr0S9vYmzTKARP/7d9Ld6d9TZAscRhZkKuDY5GD1cY3eZBD2Ffe+9ChC+oEgasS/Yp5u2m0+Aj4dNboMYqAs2930rJbqgfluNfNV8e4+xq7Th1OCZMGo0VK/bgieMJsXxSNhqCNYhL+p1RPRSZulzHT/MMXfldym1nLh/ntVGx2qcDvNG4MzunoX2AYdt0/JJTMHihyknDbk0pefV9Q9FBwuj+1eCuuapd'
+amanda::ssh_authorized_key::type:           'ssh-rsa'
 
 jenkins::config_hash:
     JENKINS_ARGS:
         value: '--prefix=/jenkins'
 
-roles::proxy::vhost: '%{::ipaddress_eth0}'
+

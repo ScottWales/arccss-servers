@@ -27,4 +27,8 @@ class roles::common::backup (
     ensure => directory,
   }
 
+  # Pick up the values from Heira
+  amanda::ssh_authorized_key {'backupserver':
+  }
+
 }

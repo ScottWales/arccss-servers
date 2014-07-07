@@ -42,15 +42,18 @@ class roles::jenkins::dockerimage {
   file {'/tmp/jenkins-docker/Dockerfile':
     ensure => present,
     source => 'puppet:///modules/roles/jenkins/Dockerfile',
+    notify => Exec['build jenkins-slave'],
   }
   file {'/tmp/jenkins-docker/id_rsa.pub':
     ensure  => present,
     source  => "${roles::jenkins::home}/.ssh/id_rsa.pub",
     require => Exec['jenkins ssh key'],
+    notify  => Exec['build jenkins-slave'],
   }
 
   # Build the image
-  exec {'docker build -t jenkins-slave /tmp/jenkins-docker':
+  exec {'build jenkins-slave':
+    command => 'docker build -t jenkins-slave /tmp/jenkins-docker',
     path    => ['/bin','/usr/bin'],
     unless  => 'docker images | grep \'^jenkins-slave\>\'',
     require => [

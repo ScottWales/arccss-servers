@@ -1,0 +1,19 @@
+---
+classes:
+    - roles::puppetmaster
+    - roles::jenkins
+    - roles::proxy
+
+packages:
+    - git
+
+roles::common::fqdn: 'climate-cms.nci.org.au'
+roles::proxy::vhost: 'climate-cms.nci.org.au'
+
+apache::default_ssl_cert: '/etc/pki/tls/certs/climate-cms.crt'
+apache::default_ssl_key:  '/etc/pki/tls/private/climate-cms.key'
+
+jenkins::configure_firewall: false
+
+docker::tcp_bind: 'tcp://127.0.0.1:4243'
+

@@ -110,9 +110,6 @@ function boot {
     sudo iptables  -F
     sudo ip6tables -F
 EOF
-
-    # Now provision
-    provision $hostname
 }
 
 # Provision the host

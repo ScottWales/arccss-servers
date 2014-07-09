@@ -53,17 +53,17 @@ class roles::jenkins::dockerimage {
 
   # Build the image
   exec {'build jenkins-slave':
-    command => 'docker build -t jenkins-slave /tmp/jenkins-docker',
-    path    => ['/bin','/usr/bin'],
-    unless  => 'docker images | grep \'^jenkins-slave\>\'',
-    require => [
+    command     => 'docker build -t jenkins-slave /tmp/jenkins-docker',
+    path        => ['/bin','/usr/bin'],
+    timeout     => 0,
+    refreshonly => true,
+    require     => [
       File[
         '/tmp/jenkins-docker/Dockerfile',
         '/tmp/jenkins-docker/id_rsa.pub'
       ],
       Package['docker'],
     ],
-    timeout => 0,
   }
 
 }

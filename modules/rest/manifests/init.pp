@@ -26,7 +26,7 @@ define rest (
 ) {
 
   if $data {
-    $_data = inline_template("-d '<% require 'shellwords' %><%= shellwords.escape(v) %>'")
+    $_data = inline_template("-d \'<% require 'shellwords' %><%= shellwords.escape(v) %>\'")
   } else {
     $_data = ''
   }

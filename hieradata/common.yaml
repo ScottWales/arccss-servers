@@ -26,5 +26,7 @@ jenkins::config_hash:
 
 # Elasticsearch stuff
 elasticsearch::manage_repo: true
+elasticsearch::repo_version: '1.1'
 logstash::manage_repo: true
+logstash::repo_version: '1.4'
 

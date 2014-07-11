@@ -78,4 +78,20 @@ class roles::elasticsearch {
     require => Class['kibana'],
     source  => 'puppet:///modules/roles/elasticsearch/kibana-default.json',
   }
+
+  # Register a backup
+  rest {'elasticsearch backup':
+    url     => 'http://localhost:9200/_snapshot/backup',
+    action  => 'PUT',
+    data    => "{
+      'type': 'fs',
+      'settings': {
+        'compress': 'true',
+        'location': '${roles::common::backup::path}/elasticsearch',
+      }
+    }",
+    unless  => 'http://localhost:9200/_snapshot/backup',
+    require => Class['roles::commmon::backup'],
+  }
+
 }

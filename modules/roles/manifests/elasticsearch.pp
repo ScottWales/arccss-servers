@@ -91,7 +91,7 @@ class roles::elasticsearch {
       }
     }",
     unless  => 'http://localhost:9200/_snapshot/backup',
-    require => Class['roles::commmon::backup'],
+    require => Class['roles::common::backup'],
   }
 
 }

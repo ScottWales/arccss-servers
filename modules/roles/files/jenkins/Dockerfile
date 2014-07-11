@@ -21,4 +21,4 @@ RUN echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Generate host keys
 RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
-EXPORT 22
+EXPOSE 22

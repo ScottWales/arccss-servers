@@ -82,7 +82,7 @@ class roles::elasticsearch {
   # Register a backup
   rest {'elasticsearch backup':
     url     => 'http://localhost:9200/_snapshot/backup',
-    action  => 'PUT',
+    request => 'PUT',
     data    => "{
       'type': 'fs',
       'settings': {

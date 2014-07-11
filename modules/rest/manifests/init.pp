@@ -18,7 +18,7 @@
 # Query REST apis
 define rest (
   $url,
-  $action = 'GET',
+  $request = 'GET',
   $data = undef,
 
   # Check these URLs for 200 first
@@ -32,7 +32,7 @@ define rest (
   }
 
   # Redirect output to stderr so we can check the response code
-  $action      = "curl -sL -w '%{http_code}' -o /dev/stderr ${url} -x${action} ${_data} | grep 200"
+  $action      = "curl -sL -w '%{http_code}' -o /dev/stderr ${url} -X${request} ${_data} | grep 200"
 
   if $unless {
     $unlesscheck = "curl -sL -w '%{http_code}' -o /dev/null ${unless} | grep 200"

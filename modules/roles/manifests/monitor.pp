@@ -28,7 +28,7 @@ class roles::monitor (
     order   => 10,
   }
   logstash::configfile {'output_elasticsearch':
-    content => "output { elasticsearch {host=localhost} }\n",
+    content => "output { elasticsearch {host => localhost} }\n",
     order   => 30,
   }
 

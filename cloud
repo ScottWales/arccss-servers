@@ -69,7 +69,7 @@ function boot {
 
     config $hostname
 
-    if [ -z "$(cloudip $hostname)" ]; then
+    if [ -n "$(cloudip $hostname)" ]; then
         echo "${hostname} already booted" >&2
         exit -1
     fi

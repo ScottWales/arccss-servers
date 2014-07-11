@@ -17,18 +17,34 @@
 
 # Set up automatic backups for $path
 # Note that Amanda configuration is server-side, this just creates a directory
+# & allows the backup server user to log in
 class roles::common::backup (
-  $path = '/backup',
+  # Remote server & user
+  $server      = undef,
+  $remote_user = 'backup',
+
+  # Key to login as the backup user
+  $remote_key  = undef,
+  $key_type    = 'ssh-rsa',
+
+  # Path to use for backups (referred to by other classes)
+  $path        = '/backup',
 ) {
 
-  include amanda::client
+  # Install Amanda client software
+  class {'amanda::client':
+    server      => $server,
+    remote_user => $remote_user,
+  }
 
   file {$path:
     ensure => directory,
   }
 
-  # Pick up the values from Heira
-  amanda::ssh_authorized_key {'backupserver':
+  # Allow access for the remote user
+  amanda::ssh_authorized_key {"${remote_user}@${server}":
+    key  => $remote_key,
+    type => $key_type,
   }
 
 }

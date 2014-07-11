@@ -28,7 +28,14 @@ class roles::monitor (
     order   => 10,
   }
   logstash::configfile {'output_elasticsearch':
-    content => "output { elasticsearch {} }\n",
+    content => "output { elasticsearch {host=localhost} }\n",
     order   => 30,
   }
+
+  collectd::plugin::network {'write to logstash':
+    server => 'localhost',
+  }
+
+  # Logstash needs elasticsearch to write messages
+  Service['elasticsearch'] ~> Service['logstash']
 }

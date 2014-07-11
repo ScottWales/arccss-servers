@@ -22,7 +22,6 @@ class roles::monitor (
   include ::collectd
   include ::logstash
   include ::elasticsearch
-  include ::kibana
 
   logstash::configfile {'input_collectd':
     content => "input { collectd {} }\n",

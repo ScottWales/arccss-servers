@@ -24,4 +24,7 @@ jenkins::config_hash:
     JENKINS_ARGS:
         value: '--prefix=/jenkins'
 
+# Elasticsearch stuff
+elasticsearch::manage_repo: true
+logstash::manage_repo: true
 

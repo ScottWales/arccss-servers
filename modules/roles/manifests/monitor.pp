@@ -17,18 +17,17 @@
 
 # Set up a ELK based monitor of the server
 class roles::monitor (
-
+  $elasticsearch = 'localhost',
 ) {
   include ::collectd
   include ::logstash
-  include ::elasticsearch
 
   logstash::configfile {'input_collectd':
     content => "input { collectd {} }\n",
     order   => 10,
   }
   logstash::configfile {'output_elasticsearch':
-    content => "output { elasticsearch {host => localhost} }\n",
+    content => "output { elasticsearch {host => ${elasticsearch}} }\n",
     order   => 30,
   }
 
@@ -36,6 +35,8 @@ class roles::monitor (
     server => 'localhost',
   }
 
-  # Logstash needs elasticsearch to write messages
-  Class['::elasticsearch'] -> Class['::logstash']
+  if $elasticsearch == 'localhost' {
+    # Logstash needs elasticsearch to start properly
+    Class['::elasticsearch'] -> Class['::logstash']
+  }
 }

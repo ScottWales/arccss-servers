@@ -37,5 +37,5 @@ class roles::monitor (
   }
 
   # Logstash needs elasticsearch to write messages
-  Service['elasticsearch'] ~> Service['logstash']
+  Class['elasticsearch::service'] ~> Service['logstash']
 }

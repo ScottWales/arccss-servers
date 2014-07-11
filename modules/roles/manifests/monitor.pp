@@ -32,7 +32,7 @@ class roles::monitor (
     order   => 30,
   }
 
-  collectd::plugin::network {'write to logstash':
+  class {'collectd::plugin::network':
     server => 'localhost',
   }
 

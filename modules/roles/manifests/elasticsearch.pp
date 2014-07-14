@@ -74,8 +74,9 @@ class roles::elasticsearch (
   # Register the backup location with elasticsearch
   # See http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/modules-snapshots.html
   file {"${backup_path}/elasticsearch":
-    ensure => 'directory',
-    owner  => 'elasticsearch',
+    ensure  => 'directory',
+    owner   => 'elasticsearch',
+    require => Package['elasticsearch'],
   }
   rest {'elasticsearch backup':
     url     => 'http://localhost:9200/_snapshot/backup',

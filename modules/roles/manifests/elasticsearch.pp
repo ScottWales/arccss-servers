@@ -33,9 +33,10 @@ class roles::elasticsearch (
   Package['wget'] -> Class['::elasticsearch']
 
   $vhost = $::fqdn
+  $instance = 'es-01'
 
   # Create the elasticsearch instance
-  elasticsearch::instance {'es-01':}
+  elasticsearch::instance {$instance:}
 
   include apache::mod::proxy
   include apache::mod::proxy_http
@@ -86,7 +87,11 @@ class roles::elasticsearch (
       }
     }",
     unless  => 'http://localhost:9200/_snapshot/backup',
-    require => Class['::roles::common::backup','::elasticsearch'],
+    require => [
+      Class['::roles::common::backup'],
+      File["${backup_path}/elasticsearch"],
+      Service[$instance],
+    ],
   }
 
 }

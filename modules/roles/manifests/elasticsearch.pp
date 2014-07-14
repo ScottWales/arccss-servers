@@ -20,7 +20,7 @@
 # to enable that
 
 class roles::elasticsearch (
-  $backup_path = '/backups',
+  $backup_path = '/backup',
 ) {
   include roles::webserver
 

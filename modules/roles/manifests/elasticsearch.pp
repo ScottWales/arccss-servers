@@ -25,28 +25,17 @@ class roles::elasticsearch (
   include roles::webserver
 
   include ::elasticsearch
-  include java
-  include apache
-  include kibana
+  include ::java
+  include ::apache
+  include ::kibana
 
   Class['java']   -> Class['::elasticsearch']
   Package['wget'] -> Class['::elasticsearch']
 
-  # Setup backups
-  file {'/sbin/elasticsearch-backup':
-    ensure => present,
-    source => 'puppet:///modules/roles/elasticsearch-backup',
-    mode   => '0500',
-    owner  => 'root',
-  }
-  cron {'elasticsearch-backup':
-    command => '/sbin/elasticsearch-backup',
-    user    => 'root',
-    hour    => 1,
-    minute  => 0,
-  }
-
   $vhost = $::fqdn
+
+  # Create the elasticsearch instance
+  elasticsearch::instance {'es-01':}
 
   include apache::mod::proxy
   include apache::mod::proxy_http

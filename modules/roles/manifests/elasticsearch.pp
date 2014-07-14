@@ -71,6 +71,10 @@ class roles::elasticsearch (
   }
 
   # Register a backup
+  file {"${backup_path}/elasticsearch":
+    ensure => 'directory',
+    owner  => 'elasticsearch',
+  }
   rest {'elasticsearch backup':
     url     => 'http://localhost:9200/_snapshot/backup',
     request => 'PUT',

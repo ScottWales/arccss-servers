@@ -19,7 +19,10 @@
 class roles::monitor (
   $elasticsearch = 'localhost',
 ) {
-  include ::collectd
+
+  # Logstash
+  # ========
+
   include ::logstash
 
   logstash::configfile {'input_collectd':
@@ -31,12 +34,26 @@ class roles::monitor (
     order   => 30,
   }
 
-  class {'collectd::plugin::network':
-    server => 'localhost',
-  }
-
   if $elasticsearch == 'localhost' {
     # Logstash needs elasticsearch to start properly
     Class['::elasticsearch'] -> Class['::logstash']
   }
+
+  # Collectd
+  # ===============
+
+  include ::collectd
+
+  include ::collectd::plugin::cpu
+  include ::collectd::plugin::df
+  include ::collectd::plugin::interface
+  include ::collectd::plugin::memory
+  include ::collectd::plugin::processes
+  include ::collectd::plugin::swap
+
+  # Output to logstash
+  class {'collectd::plugin::network':
+    server => 'localhost',
+  }
+
 }

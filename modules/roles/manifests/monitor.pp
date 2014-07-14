@@ -42,7 +42,11 @@ class roles::monitor (
   # Collectd
   # ===============
 
-  include ::collectd
+  class {'::collectd':
+    purge        => true,
+    recurse      => true,
+    purge_config => true,
+  }
 
   include ::collectd::plugin::cpu
   include ::collectd::plugin::df

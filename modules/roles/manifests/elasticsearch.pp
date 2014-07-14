@@ -78,7 +78,7 @@ class roles::elasticsearch (
       \"type\": \"fs\",
       \"settings\": {
         \"compress\": \"true\",
-        \"location\": \"${backup_path}/elasticsearch\",
+        \"location\": \"${backup_path}/elasticsearch\"
       }
     }",
     unless  => 'http://localhost:9200/_snapshot/backup',

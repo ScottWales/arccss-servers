@@ -94,4 +94,10 @@ class roles::elasticsearch (
     ],
   }
 
+  cron {'elasticsearch-backup':
+    command => '/usr/bin/curl -XPOST "localhost:9200/_snapshot/backup/snapshot?wait_for_completion=true"',
+    hour    => '20',
+    minute  => '0',
+  }
+
 }

@@ -19,7 +19,9 @@
 # Elasticsearch doesn't let us control what can be accessed, so we use Nginix
 # to enable that
 
-class roles::elasticsearch {
+class roles::elasticsearch (
+  $backup_path = '/backups',
+) {
   include roles::webserver
 
   include ::elasticsearch
@@ -84,10 +86,10 @@ class roles::elasticsearch {
     url     => 'http://localhost:9200/_snapshot/backup',
     request => 'PUT',
     data    => "{
-      'type': 'fs',
-      'settings': {
-        'compress': 'true',
-        'location': '${roles::common::backup::path}/elasticsearch',
+      \"type\": \"fs\",
+      \"settings\": {
+        \"compress\": \"true\",
+        \"location\": \"${backup_path}/elasticsearch\",
       }
     }",
     unless  => 'http://localhost:9200/_snapshot/backup',

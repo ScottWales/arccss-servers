@@ -71,7 +71,8 @@ class roles::elasticsearch (
     source  => 'puppet:///modules/roles/elasticsearch/kibana-default.json',
   }
 
-  # Register a backup
+  # Register the backup location with elasticsearch
+  # See http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/modules-snapshots.html
   file {"${backup_path}/elasticsearch":
     ensure => 'directory',
     owner  => 'elasticsearch',
@@ -94,9 +95,21 @@ class roles::elasticsearch (
     ],
   }
 
-  cron {'elasticsearch-backup':
-    command => '/usr/bin/curl -XPOST "localhost:9200/_snapshot/backup/snapshot?wait_for_completion=true"',
+  # Create daily backups of Elasticsearch, to be fetched by the remote backup
+  # server.  We can only have 1 snapshot for each name, so we delete the old one
+  # before creating the new. Backups are incremental and deleting only removes
+  # files not in use by other snapshots, so each new backup run should do
+  # minimal work. To restore a snapshot run e.g.
+  #    curl -XPOST "localhost:9200/_snapshot/backup/snapshot_3/_restore"
+
+  cron {'elasticsearch-backup-prepare':
+    command => '/usr/bin/curl -XDELETE "localhost:9200/_snapshot/backup/snapshot_$(/bin/date +%w)"',
     hour    => '20',
+    minute  => '0',
+  }
+  cron {'elasticsearch-backup':
+    command => '/usr/bin/curl -XPUT "localhost:9200/_snapshot/backup/snapshot_$(/bin/date +%w)"',
+    hour    => '21',
     minute  => '0',
   }
 

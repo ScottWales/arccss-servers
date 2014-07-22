@@ -1,0 +1,17 @@
+{
+  "name": "saw-shipyard",
+  "version": "0.1.0",
+  "author": "saw",
+  "summary": "Install Shipyard for managing Docker instances",
+  "license": "Apache 2.0",
+  "source": "https://github.com/ScottWales/puppet-shipyard",
+  "project_page": "https://github.com/ScottWales/puppet-shipyard",
+  "issues_url": "https://github.com/ScottWales/puppet-shipyard/issues",
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_range": ">= 1.0.0"
+    }
+  ]
+}
+

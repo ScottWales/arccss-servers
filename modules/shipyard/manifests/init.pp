@@ -34,37 +34,42 @@ class shipyard (
   }
 
   docker::run {'shipyard-redis':
-    image => 'shipyard/redis',
-    ports => '6379',
+    image    => 'shipyard/redis',
+    use_name => true,
+    ports    => '6379',
   }
 
   docker::run {'shipyard-router':
-    image   => 'shipyard/router',
-    ports   => '80',
-    links   => 'shipyard-redis:redis',
-    require => Docker::Run['shipyard-redis'],
+    image    => 'shipyard/router',
+    use_name => true,
+    ports    => '80',
+    links    => 'shipyard-redis:redis',
+    require  => Docker::Run['shipyard-redis'],
   }
 
   docker::run {'shipyard-lb':
-    image   => 'shipyard/lb',
-    ports   => '80:80',
-    links   => ['shipyard-redis:redis','shipyard-router:app_router'],
-    require => Docker::Run['shipyard-redis','shipyard-router'],
+    image    => 'shipyard/lb',
+    use_name => true,
+    ports    => '80:80',
+    links    => ['shipyard-redis:redis','shipyard-router:app_router'],
+    require  => Docker::Run['shipyard-redis','shipyard-router'],
   }
 
   docker::run {'shipyard-db':
-    image   => 'shipyard/db',
-    ports   => '5432',
-    env     => ["DB_PASS=${db_pass}"],
+    image    => 'shipyard/db',
+    use_name => true,
+    ports    => '5432',
+    env      => ["DB_PASS=${db_pass}"],
   }
 
   docker::run {'shipyard-shipyard':
-    image   => 'shipyard/shipyard',
-    ports   => '8000:8000',
-    links   => ['shipyard-db:db','shipyard-redis:redis'],
-    env     => ["ADMIN_PASS='${admin_pass}'"],
-    command => '/app/.docker/run.sh app master-worker',
-    require => Docker::Run['shipyard-redis','shipyard-db'],
+    image    => 'shipyard/shipyard',
+    use_name => true,
+    ports    => '8000:8000',
+    links    => ['shipyard-db:db','shipyard-redis:redis'],
+    env      => ["ADMIN_PASS='${admin_pass}'"],
+    command  => '/app/.docker/run.sh app master-worker',
+    require  => Docker::Run['shipyard-redis','shipyard-db'],
   }
 
 }

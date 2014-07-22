@@ -40,19 +40,19 @@ class shipyard (
   }
 
   docker::run {'shipyard-router':
-    image    => 'shipyard/router',
-    use_name => true,
-    ports    => '80',
-    links    => 'shipyard-redis:redis',
-    require  => Docker::Run['shipyard-redis'],
+    image     => 'shipyard/router',
+    use_name  => true,
+    ports     => '80',
+    links     => 'shipyard-redis:redis',
+    subscribe => Service['docker-shipyard-redis'],
   }
 
   docker::run {'shipyard-lb':
-    image    => 'shipyard/lb',
-    use_name => true,
-    ports    => '80:80',
-    links    => ['shipyard-redis:redis','shipyard-router:app_router'],
-    require  => Docker::Run['shipyard-redis','shipyard-router'],
+    image     => 'shipyard/lb',
+    use_name  => true,
+    ports     => '80:80',
+    links     => ['shipyard-redis:redis','shipyard-router:app_router'],
+    subscribe => Service['docker-shipyard-redis','docker-shipyard-router'],
   }
 
   docker::run {'shipyard-db':
@@ -63,22 +63,22 @@ class shipyard (
   }
 
   docker::run {'shipyard-shipyard':
-    image    => 'shipyard/shipyard',
-    use_name => true,
-    ports    => '8000:8000',
-    links    => ['shipyard-db:db','shipyard-redis:redis'],
-    env      => ["ADMIN_PASS='${admin_pass}'"],
-    command  => '/app/.docker/run.sh app master-worker',
-    require  => Docker::Run['shipyard-redis','shipyard-db'],
+    image     => 'shipyard/shipyard',
+    use_name  => true,
+    ports     => '8000:8000',
+    links     => ['shipyard-db:db','shipyard-redis:redis'],
+    env       => ["ADMIN_PASS='${admin_pass}'"],
+    command   => '/app/.docker/run.sh app master-worker',
+    subscribe => Service['docker-shipyard-redis','docker-shipyard-db'],
   }
 
   docker::run {'shipyard-agent':
-    image    => 'shipyard/agent',
-    use_name => true,
-    env      => ["IP=${::network_eth0}",'URL=http://localhost:8000'],
-    ports    => '4500:4500',
-    volumes  => '/var/run/docker.sock:/docker.sock',
-    require  => Docker::Run['shipyard-shipyard'],
+    image     => 'shipyard/agent',
+    use_name  => true,
+    env       => ["IP=${::network_eth0}",'URL=http://localhost:8000'],
+    ports     => '4500:4500',
+    volumes   => '/var/run/docker.sock:/docker.sock',
+    subscribe => Service['docker-shipyard-shipyard'],
   }
 
 

@@ -72,4 +72,13 @@ class shipyard (
     require  => Docker::Run['shipyard-redis','shipyard-db'],
   }
 
+  docker::run {'shipyard-agent':
+    image    => 'shipyard/agent',
+    use_name => true,
+    env      => ["IP=${::network_eth0}",'URL=http://localhost:8000'],
+    ports    => '4500:4500',
+    volumes  => '/var/run/docker.sock:/docker.sock',
+  }
+
+
 }

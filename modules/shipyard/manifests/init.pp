@@ -21,7 +21,7 @@ class shipyard (
   require docker
 
   if ! $docker::tcp_bind {
-    warn('Shipyard requires Docker\'s TCP interface, please set "$docker::tcp_bind" (e.g. to \'tcp://127.0.0.1:4243\')')
+    warning('Shipyard requires Docker\'s TCP interface, please set "$docker::tcp_bind" (e.g. to \'tcp://127.0.0.1:4243\')')
   }
 
 }

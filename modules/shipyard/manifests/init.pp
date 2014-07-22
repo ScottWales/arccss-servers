@@ -78,6 +78,7 @@ class shipyard (
     env      => ["IP=${::network_eth0}",'URL=http://localhost:8000'],
     ports    => '4500:4500',
     volumes  => '/var/run/docker.sock:/docker.sock',
+    require  => Docker::Run['shipyard-shipyard'],
   }
 
 

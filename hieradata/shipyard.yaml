@@ -2,4 +2,5 @@
 classes:
     - roles::shipyard
 
-docker::tcp_bind: 'tcp://127.0.0.1:4243'
+#docker::tcp_bind: 'tcp://127.0.0.1:4243'
+shipyard::admin_pass: 'insecure'
